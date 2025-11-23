@@ -3,3 +3,5 @@
 
 /* Project-specific CSS */
 @import './css/main.css';
+
+@config './tailwind.config.ts';

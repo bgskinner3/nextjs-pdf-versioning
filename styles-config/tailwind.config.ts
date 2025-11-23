@@ -1,17 +1,16 @@
 import type { Config } from 'tailwindcss';
-
+import { tailwindColors } from './colors';
+/** @type {import('tailwindcss').Config} */
 const tailwindConfig: Config = {
   content: [
-    './app/**/*.{ts,tsx}', // App Router pages and layouts
-    './components/**/*.{ts,tsx}', // components folder
+    './app/**/*.{ts,tsx,js,jsx,mdx}',
+    './components/**/*.{ts,tsx,js,jsx}',
     './pages/**/*.{ts,tsx}', // optional, if you still use pages folder
   ],
+
   theme: {
     extend: {
-      colors: {
-        primary: '#1D4ED8', // Example: your primary color
-        secondary: '#9333EA', // Example: secondary color
-      },
+      colors: tailwindColors,
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui'],
       },
@@ -30,9 +29,15 @@ const tailwindConfig: Config = {
             transform: 'translate3d(4px, 0, 0)',
           },
         },
+        shine: {
+          '0%': { 'background-position': '0% 0%' },
+          '50%': { 'background-position': '100% 100%' },
+          '100%': { 'background-position': '0% 0%' },
+        },
       },
       animation: {
         shake: 'shake 0.82s cubic-bezier(.36,.07,.19,.97) both',
+        shine: 'shine var(--duration) linear infinite',
       },
       container: {
         padding: {
@@ -44,7 +49,6 @@ const tailwindConfig: Config = {
     },
   },
   plugins: [],
-
-};
+} satisfies Config;
 
 export default tailwindConfig;

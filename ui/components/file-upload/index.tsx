@@ -5,7 +5,7 @@ import { motion } from 'motion/react';
 import { BasicIcon } from '../icon';
 import { useSimpleDropzone } from '@/hooks';
 import { GridPattern } from './backdrop';
-
+import { ShineBorder } from '../animated/shine-border';
 const mainVariant = {
   initial: {
     x: 0,
@@ -37,6 +37,7 @@ export const FileUpload = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (newFiles: File[]) => {
+    setErrors([]);
     setFiles((prevFiles) => [...prevFiles, ...newFiles]);
     action?.(newFiles);
   };
@@ -48,6 +49,7 @@ export const FileUpload = ({
     setErrors(messages);
   };
   const handleClick = () => {
+    setErrors([]);
     fileInputRef.current?.click();
   };
 
@@ -59,7 +61,12 @@ export const FileUpload = ({
   });
 
   return (
-    <div className="w-full" {...getRootProps()} data-has-error={errors.length}>
+    <div
+      className="group/fileBase w-full"
+      {...getRootProps()}
+      data-has-error={errors.length > 0}
+      data-has-files={files.length}
+    >
       <motion.div
         onClick={handleClick}
         whileHover="animate"
@@ -142,9 +149,14 @@ export const FileUpload = ({
                   damping: 20,
                 }}
                 className={cn(
-                  'relative z-40 mx-auto mt-4 flex h-32 w-full max-w-32 items-center justify-center rounded-md bg-white group-hover/file:shadow-2xl dark:bg-neutral-900',
+                  'relative z-40 mx-auto mt-4 flex h-32 w-full max-w-32 items-center justify-center rounded-md bg-neutral-900 group-hover/file:shadow-2xl',
                   'shadow-[0px_10px_50px_rgba(0,0,0,0.1)]',
-                  'group-data-[has-error=true]/file: animate-',
+
+                  // error handling
+                  'group-data-[has-error=true]/fileBase:animate-shake',
+                  'group-data-[has-error=true]/fileBase:bg-blood-red',
+                  'group-data-[has-error=true]/fileBase:group-hover/file:bg-neutral-900',
+                  'transition-colors duration-500',
                 )}
               >
                 {isDragging ? (
@@ -156,26 +168,40 @@ export const FileUpload = ({
                     Drop it
                     <BasicIcon
                       name="pdf"
-                      className="h-auto w-8 text-neutral-600 dark:text-neutral-400"
+                      className="h-auto w-8 text-neutral-400"
                     />
                   </motion.p>
                 ) : (
                   <BasicIcon
                     name="pdf"
-                    className="h-auto w-8 text-neutral-600 dark:text-neutral-400"
+                    className="h-auto w-8 text-neutral-400"
                   />
                 )}
               </motion.div>
             )}
 
-            {!files.length && (
-              <motion.div
-                variants={secondaryVariant}
-                className={cn(
-                  'absolute inset-0 z-30 mx-auto mt-4 flex h-32 w-full max-w-32 items-center justify-center rounded-md border border-dashed border-sky-400 bg-transparent opacity-0',
-                )}
-              />
-            )}
+            <motion.div
+              variants={secondaryVariant}
+              style={
+                {
+                  '--border-width': '2px',
+                  '--duration': '14s',
+                  backgroundImage:
+                    'radial-gradient(transparent, transparent, #4f46e5, #f59e0b, #06b6d4, transparent, transparent)',
+                } as React.CSSProperties
+              }
+              className={cn(
+                'absolute inset-0 z-30 mx-auto mt-4 flex h-32 w-full max-w-32 items-center justify-center rounded-md bg-transparent opacity-0 outline outline-offset-2 outline-sky-400 outline-dashed',
+                'motion-safe:animate-shine pointer-events-none will-change-[background-position]',
+                'p-(--border-width)', // padding equals border width
+                '[-webkit-mask:linear-gradient(#fff 0 0)_content-box,linear-gradient(#fff 0 0)]',
+                'mask-exclude [-webkit-mask-composite:xor]',
+                '[-webkit-mask-repeat:no-repeat] [-webkit-mask-size:100%_100%]',
+                'mask-size-[100%_100%] mask-no-repeat',
+                'bg-size-[300%_300%]',
+                'group-data-[has-files=false]/fileBase:hidden',
+              )}
+            ></motion.div>
           </div>
         </div>
       </motion.div>

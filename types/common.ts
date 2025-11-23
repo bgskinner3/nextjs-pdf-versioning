@@ -1,10 +1,5 @@
-import type { ComponentPropsWithoutRef } from "react";
+import type { ComponentPropsWithoutRef } from 'react';
 
+type TIconProps = {} & ComponentPropsWithoutRef<'svg'>;
 
-type TIconProps = {} & ComponentPropsWithoutRef<'svg'>
-
-
-
-export type {
-  TIconProps
-}
+export type { TIconProps };

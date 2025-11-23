@@ -2,8 +2,11 @@
   :root {
     --background: #ffffff;
     --foreground: #171717;
+    /* ADDED */
+    --blood-red: #610707;
+    --off-white: #f8f3ed;
+    --crimson-alert: #b71c1c;
   }
-
 
   @media (prefers-color-scheme: dark) {
     :root {
