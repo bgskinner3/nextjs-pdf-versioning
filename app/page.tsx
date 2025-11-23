@@ -5,7 +5,6 @@ import { FileUpload, EnhancedViewer } from '@/ui';
 import { cn } from '@/utils';
 import { PdfService } from '@/service';
 
-
 export default function Home() {
   const [currentFile, setCurrentFile] = useState<File | null>(null);
   const [docId, setDocId] = useState<string | null>(null);
@@ -16,8 +15,8 @@ export default function Home() {
     if (!file) return;
 
     // Validation: PDF only
-    if (file.type !== "application/pdf") {
-      alert("Only PDF files are allowed.");
+    if (file.type !== 'application/pdf') {
+      alert('Only PDF files are allowed.');
       return;
     }
 
@@ -28,7 +27,7 @@ export default function Home() {
       const newDocId = await PdfService.createDocument(file);
       setDocId(newDocId);
     } catch (error) {
-      console.error("Failed to save document:", error);
+      console.error('Failed to save document:', error);
       return;
     }
 
@@ -52,7 +51,7 @@ export default function Home() {
     >
       <main
         className={cn(
-          'flex min-h-screen min-w-screen w-full max-w-3xl flex-col items-center justify-center bg-black sm:items-start',
+          'flex min-h-screen w-full max-w-3xl min-w-screen flex-col items-center justify-center bg-black sm:items-start',
         )}
       >
         {!fileUrl && <FileUpload action={handleFileUpload} />}

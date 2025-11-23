@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import { useCallback, useState } from 'react';
 import type { CSSProperties, ChangeEvent, DragEvent } from 'react';
 type TRootProps = {

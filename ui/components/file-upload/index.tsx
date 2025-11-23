@@ -62,7 +62,7 @@ export const FileUpload = ({
 
   return (
     <div
-      className="group/fileBase flex items-center justify-center relative w-full overflow-hidden"
+      className="group/fileBase relative flex w-full items-center justify-center overflow-hidden"
       {...getRootProps()}
       data-has-error={errors.length > 0}
       data-has-files={files.length}

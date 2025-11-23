@@ -1,7 +1,5 @@
-import { db, TPdfDocument, TPdfVersion } from '../db-service'
+import { db, TPdfDocument, TPdfVersion } from '../db-service';
 import { v4 as uuidv4 } from 'uuid';
-
-
 
 export class PdfService {
   /** Create a new document with Version 1 */
@@ -42,15 +40,14 @@ export class PdfService {
     };
 
     await db.versions.add(newVersion);
-    await db.documents.update(docId, { currentVersion: doc.currentVersion + 1 });
+    await db.documents.update(docId, {
+      currentVersion: doc.currentVersion + 1,
+    });
   }
 
   /** Fetch all versions for a document */
   static async getVersions(docId: string): Promise<TPdfVersion[]> {
-    return db.versions
-      .where('docId')
-      .equals(docId)
-      .sortBy('version');
+    return db.versions.where('docId').equals(docId).sortBy('version');
   }
 
   /** Get document metadata */

@@ -3,14 +3,12 @@ import { Viewer, Worker, SpecialZoomLevel } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 import '@react-pdf-viewer/core/lib/styles/index.css';
-import { useState } from 'react';
+
 type TEnhancedViewerProps = {
   fileUrl: string;
 };
 
 export const EnhancedViewer = ({ fileUrl }: TEnhancedViewerProps) => {
-  const [viewerKey, setViewerKey] = useState(0); // force rerender for plugin
-
   const defaultLayoutPluginInstance = defaultLayoutPlugin({
     setInitialTab: (_doc) => Promise.resolve(0),
   });

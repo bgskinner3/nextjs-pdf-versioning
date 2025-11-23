@@ -1,7 +1,5 @@
 import Dexie, { Table } from 'dexie';
 
-
-
 export type TPdfVersion = {
   id?: number;
   docId: string;
@@ -9,13 +7,13 @@ export type TPdfVersion = {
   message: string;
   timestamp: Date;
   fileBlob: Blob;
-}
+};
 
 export type TPdfDocument = {
   id?: string;
   name: string;
   currentVersion: number;
-}
+};
 
 export class AppDB extends Dexie {
   documents!: Table<TPdfDocument, string>;
