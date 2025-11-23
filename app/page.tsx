@@ -1,18 +1,10 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import { FileUpload } from '@/ui';
-import { cn, db, TPdfDocument, TPdfVersion } from '@/utils';
-import { v4 as uuidv4 } from 'uuid';
-import dynamic from 'next/dynamic';
+import { FileUpload, EnhancedViewer } from '@/ui';
+import { cn } from '@/utils';
+import { PdfService } from '@/service';
 
-const EnhancedViewer = dynamic(
-  () =>
-    import('@/ui/components/pdf/enhanced-viewer').then(
-      (mod) => mod.EnhancedViewer,
-    ),
-  { ssr: false },
-);
 
 export default function Home() {
   const [currentFile, setCurrentFile] = useState<File | null>(null);
@@ -23,37 +15,26 @@ export default function Home() {
     const file = files[0];
     if (!file) return;
 
+    // Validation: PDF only
+    if (file.type !== "application/pdf") {
+      alert("Only PDF files are allowed.");
+      return;
+    }
+
     setCurrentFile(file);
 
-    // Generate object URL for PDF viewing
+    // 1. Save document + Version 1 via service
+    try {
+      const newDocId = await PdfService.createDocument(file);
+      setDocId(newDocId);
+    } catch (error) {
+      console.error("Failed to save document:", error);
+      return;
+    }
+
+    // 2. Generate object URL for the viewer
     const url = URL.createObjectURL(file);
     setFileUrl(url);
-
-    // 1. Create a unique ID for the document
-    const newDocId = uuidv4();
-    setDocId(newDocId);
-
-    // 2. Persist the file and V1 metadata in IndexedDB
-    const newDocument: TPdfDocument = {
-      id: newDocId,
-      name: file.name,
-      currentVersion: 1,
-    };
-
-    const firstVersion: TPdfVersion = {
-      docId: newDocId,
-      version: 1,
-      message: 'Initial Upload (V1)',
-      timestamp: new Date(),
-      fileBlob: file,
-    };
-
-    try {
-      await db.documents.put(newDocument);
-      await db.versions.add(firstVersion);
-    } catch (error) {
-      console.error('Failed to save document to IndexedDB:', error);
-    }
   }, []);
 
   // Clean up object URL when component unmounts or file changes
