@@ -6,6 +6,9 @@
     --blood-red: #610707;
     --off-white: #f8f3ed;
     --crimson-alert: #b71c1c;
+    --cool-gray-900: #08182e;
+    --cool-gray-1000: #061223;
+    --cool-gray-1100: #040d1a;
   }
 
   @media (prefers-color-scheme: dark) {

@@ -6,4 +6,7 @@ export const tailwindColors = {
   'off-white': '#f8f3ed',
   'blood-red': '#610707',
   'crimson-alert': '#b71c1c',
+  'cool-gray-900': '#08182E',
+  'cool-gray-1000': '#061223',
+  'cool-gray-1100': '#040D1A',
 } as const;
