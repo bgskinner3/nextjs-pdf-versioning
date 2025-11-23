@@ -5,7 +5,7 @@ import { motion } from 'motion/react';
 import { BasicIcon } from '../icon';
 import { useSimpleDropzone } from '@/hooks';
 import { GridPattern } from './backdrop';
-import { ShineBorder } from '../animated/shine-border';
+
 const mainVariant = {
   initial: {
     x: 0,
@@ -62,15 +62,18 @@ export const FileUpload = ({
 
   return (
     <div
-      className="group/fileBase w-full"
+      className="group/fileBase flex items-center justify-center relative w-full overflow-hidden"
       {...getRootProps()}
       data-has-error={errors.length > 0}
       data-has-files={files.length}
     >
+      <div className="absolute inset-0 mask-[radial-gradient(ellipse_at_center,white,transparent)]">
+        <GridPattern />
+      </div>
       <motion.div
         onClick={handleClick}
         whileHover="animate"
-        className="group/file relative block w-full cursor-pointer overflow-hidden rounded-lg p-10"
+        className="group/file relative block w-fit cursor-pointer overflow-hidden rounded-lg p-10"
       >
         <input
           ref={fileInputRef}
@@ -78,9 +81,7 @@ export const FileUpload = ({
           {...getInputProps()}
           className="hidden"
         />
-        <div className="absolute inset-0 mask-[radial-gradient(ellipse_at_center,white,transparent)]">
-          <GridPattern />
-        </div>
+
         <div className="flex flex-col items-center justify-center">
           <p className="relative z-20 font-sans text-base font-bold text-neutral-700 dark:text-neutral-300">
             Upload PDF
