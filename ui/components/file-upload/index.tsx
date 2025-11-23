@@ -59,7 +59,7 @@ export const FileUpload = ({
   });
 
   return (
-    <div className="w-full" {...getRootProps()}>
+    <div className="w-full" {...getRootProps()} data-has-error={errors.length}>
       <motion.div
         onClick={handleClick}
         whileHover="animate"
@@ -144,6 +144,7 @@ export const FileUpload = ({
                 className={cn(
                   'relative z-40 mx-auto mt-4 flex h-32 w-full max-w-32 items-center justify-center rounded-md bg-white group-hover/file:shadow-2xl dark:bg-neutral-900',
                   'shadow-[0px_10px_50px_rgba(0,0,0,0.1)]',
+                  'group-data-[has-error=true]/file: animate-',
                 )}
               >
                 {isDragging ? (
@@ -170,7 +171,9 @@ export const FileUpload = ({
             {!files.length && (
               <motion.div
                 variants={secondaryVariant}
-                className="absolute inset-0 z-30 mx-auto mt-4 flex h-32 w-full max-w-32 items-center justify-center rounded-md border border-dashed border-sky-400 bg-transparent opacity-0"
+                className={cn(
+                  'absolute inset-0 z-30 mx-auto mt-4 flex h-32 w-full max-w-32 items-center justify-center rounded-md border border-dashed border-sky-400 bg-transparent opacity-0',
+                )}
               />
             )}
           </div>
