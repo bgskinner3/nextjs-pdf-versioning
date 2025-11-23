@@ -29,11 +29,20 @@ export function useSimpleDropzone({
 
   const filterFiles = useCallback(
     (files: File[]) => {
-      if (!multiple && files.length > 1) {
-        onDropRejected?.(files);
+      const pdfFiles = files.filter(file => file.type === 'application/pdf');
+      const rejected = files.filter(file => file.type !== 'application/pdf');
+
+      if (!multiple && pdfFiles.length > 1) {
+
+        onDropRejected?.(pdfFiles.concat(rejected));
         return [];
       }
-      return files;
+
+      if (rejected.length > 0) {
+        onDropRejected?.(rejected);
+      }
+
+      return pdfFiles;
     },
     [multiple, onDropRejected],
   );

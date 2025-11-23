@@ -15,9 +15,17 @@ const tailwindConfig: Config = {
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui'],
       },
+      container: {
+        padding: {
+          DEFAULT: '1rem',
+          md: '2.5rem',
+        },
+        center: true,
+      },
     },
   },
   plugins: [],
+
 };
 
 export default tailwindConfig;

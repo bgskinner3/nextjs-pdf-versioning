@@ -5,7 +5,7 @@ import { motion } from 'motion/react';
 import { BasicIcon } from '../icon';
 import { useSimpleDropzone } from '@/hooks';
 import { GridPattern } from './backdrop';
-// import { useDropzone } from 'react-dropzone';
+
 const mainVariant = {
   initial: {
     x: 0,
@@ -33,6 +33,7 @@ export const FileUpload = ({
   action?: (files: File[]) => void;
 }) => {
   const [files, setFiles] = useState<File[]>([]);
+  const [errors, setErrors] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (newFiles: File[]) => {
@@ -40,17 +41,21 @@ export const FileUpload = ({
     action?.(newFiles);
   };
 
+  const handleRejectedFiles = (rejectedFiles: File[]) => {
+    const messages = rejectedFiles.map(
+      (file) => `${file.name} is not a PDF file and was rejected.`,
+    );
+    setErrors(messages);
+  };
   const handleClick = () => {
     fileInputRef.current?.click();
   };
 
-  const { getRootProps, isDragging } = useSimpleDropzone({
+  const { getRootProps, isDragging, getInputProps } = useSimpleDropzone({
     multiple: false,
     noClick: true,
     onDrop: handleFileChange,
-    onDropRejected: (error) => {
-      console.log(error);
-    },
+    onDropRejected: handleRejectedFiles,
   });
 
   return (
@@ -63,8 +68,7 @@ export const FileUpload = ({
         <input
           ref={fileInputRef}
           id="file-upload-handle"
-          type="file"
-          onChange={(e) => handleFileChange(Array.from(e.target.files || []))}
+          {...getInputProps()}
           className="hidden"
         />
         <div className="absolute inset-0 mask-[radial-gradient(ellipse_at_center,white,transparent)]">
@@ -72,10 +76,10 @@ export const FileUpload = ({
         </div>
         <div className="flex flex-col items-center justify-center">
           <p className="relative z-20 font-sans text-base font-bold text-neutral-700 dark:text-neutral-300">
-            Upload file
+            Upload PDF
           </p>
           <p className="relative z-20 mt-2 font-sans text-base font-normal text-neutral-400 dark:text-neutral-400">
-            Drag or drop your files here or click to upload
+            Drag or drop your PDF files here or click to upload
           </p>
           <div className="relative mx-auto mt-10 w-full max-w-xl">
             {files.length > 0 &&
@@ -167,7 +171,7 @@ export const FileUpload = ({
               <motion.div
                 variants={secondaryVariant}
                 className="absolute inset-0 z-30 mx-auto mt-4 flex h-32 w-full max-w-32 items-center justify-center rounded-md border border-dashed border-sky-400 bg-transparent opacity-0"
-              ></motion.div>
+              />
             )}
           </div>
         </div>
@@ -175,34 +179,3 @@ export const FileUpload = ({
     </div>
   );
 };
-
-// function GridPattern() {
-//   const columns = 41;
-//   const rows = 11;
-
-//   const cells = useMemo(() => {
-//     return Array.from({ length: rows }).flatMap((_, row) =>
-//       Array.from({ length: columns }).map((_, col) => {
-//         const index = row * columns + col;
-//         const isEven = index % 2 === 0;
-
-//         return (
-//           <div
-//             key={`${col}-${row}`}
-//             className={`flex h-10 w-10 shrink-0 rounded-xs ${
-//               isEven
-//                 ? 'bg-gray-50 dark:bg-neutral-950'
-//                 : 'bg-gray-50 shadow-[0px_0px_1px_3px_rgba(255,255,255,1)_inset] dark:bg-neutral-950 dark:shadow-[0px_0px_1px_3px_rgba(0,0,0,1)_inset]'
-//             }`}
-//           />
-//         );
-//       }),
-//     );
-//   }, []);
-
-//   return (
-//     <div className="flex shrink-0 scale-105 flex-wrap items-center justify-center gap-x-px gap-y-px bg-gray-100 dark:bg-neutral-900">
-//       {cells}
-//     </div>
-//   );
-// }
