@@ -17,9 +17,7 @@ import {
   TooltipContent,
   TooltipProvider,
 } from '../../tool-tip';
-import { TPdfVersion, TNote } from '@/types';
-import { useDebounce } from '@/hooks';
-import { memo } from 'react';
+import { TPdfVersion } from '@/types';
 
 const RenderHighlightTarget = ({
   props,
@@ -32,12 +30,6 @@ const RenderHighlightTarget = ({
   actions: THighlighterActions;
   version: TPdfVersion;
 }) => {
-  const safeAddHighlight = useDebounce(
-    (note: TNote) => {
-      actions.addNewNote(note, version);
-    },
-    50, // 50ms debounce
-  );
   return (
     <div
       style={{
@@ -60,13 +52,16 @@ const RenderHighlightTarget = ({
               <Button
                 className="group/highlight"
                 onClick={() => {
-                  safeAddHighlight({
-                    id: values.notes.length + 1,
-                    highlightAreas: props.highlightAreas,
-                    quote: props.selectedText,
-                    isHighlight: true,
-                    isRedactor: false,
-                  });
+                  actions.addNewNote(
+                    {
+                      id: values.notes.length + 1,
+                      highlightAreas: props.highlightAreas,
+                      quote: props.selectedText,
+                      isHighlight: true,
+                      isRedactor: false,
+                    },
+                    version,
+                  );
                   props.cancel();
                 }}
               >
@@ -74,21 +69,21 @@ const RenderHighlightTarget = ({
               </Button>
               <Button
                 className="group/highlight"
-                // onClick={() => {
-                //   setTimeout(() => {
-                //     actions.addNewNote(
-                //       {
-                //         id: values.notes.length + 1,
-                //         highlightAreas: props.highlightAreas,
-                //         quote: props.selectedText,
-                //         isHighlight: false,
-                //         isRedactor: true,
-                //       },
-                //       version,
-                //     );
-                //   }, 0);
-                //   props.cancel();
-                // }}
+                onClick={() => {
+                  setTimeout(() => {
+                    actions.addNewNote(
+                      {
+                        id: values.notes.length + 1,
+                        highlightAreas: props.highlightAreas,
+                        quote: props.selectedText,
+                        isHighlight: false,
+                        isRedactor: true,
+                      },
+                      version,
+                    );
+                  }, 0);
+                  props.cancel();
+                }}
               >
                 <BasicIcon name="brush" />
               </Button>
@@ -152,22 +147,22 @@ const RenderHighlightContent = ({
       >
         <div style={{ marginRight: '8px' }}>
           <Button
-          // onClick={() => {
-          //   setTimeout(() => {
-          //     actions.addNewNote(
-          //       {
-          //         id: values.notes.length + 1,
-          //         content: values.noteMessage,
-          //         highlightAreas: props.highlightAreas,
-          //         quote: props.selectedText,
-          //         isHighlight: false,
-          //         isRedactor: false,
-          //       },
-          //       version,
-          //     );
-          //   }, 0);
-          //   props.cancel();
-          // }}
+            onClick={() => {
+              setTimeout(() => {
+                actions.addNewNote(
+                  {
+                    id: values.notes.length + 1,
+                    content: values.noteMessage,
+                    highlightAreas: props.highlightAreas,
+                    quote: props.selectedText,
+                    isHighlight: false,
+                    isRedactor: false,
+                  },
+                  version,
+                );
+              }, 0);
+              props.cancel();
+            }}
           >
             Add
           </Button>
@@ -208,7 +203,6 @@ const RenderHighlights = ({ props, values }: TRenderHighlights) => {
     </div>
   );
 };
-
 
 const SidebarNotes = ({
   values,

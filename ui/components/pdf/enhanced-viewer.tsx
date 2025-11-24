@@ -10,6 +10,7 @@ import { Viewer, Worker, SpecialZoomLevel } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import { searchPlugin } from '@react-pdf-viewer/search';
 import { zoomPlugin } from '@react-pdf-viewer/zoom';
+
 import { cn, ObjectUtils } from '@/utils';
 import { BasicIcon } from '../icon';
 import { Button } from '../button';
@@ -376,7 +377,6 @@ export const EnhancedViewer = ({ fileUrl }: TEnhancedViewerProps) => {
                       </Dialog.Body>
                     </Dialog.Content>
                   </Dialog>
-                  {/* <props.ShowProperties /> */}
                 </div>
               </div>
             );
@@ -393,7 +393,7 @@ export const EnhancedViewer = ({ fileUrl }: TEnhancedViewerProps) => {
         <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
           <Viewer
             fileUrl={fileUrl}
-            // defaultScale={SpecialZoomLevel.ActualSize}
+            defaultScale={SpecialZoomLevel.PageFit}
             plugins={[
               defaultLayoutPluginInstance,
               searchPluginInstance,
@@ -437,7 +437,7 @@ export const EnhancedViewer = ({ fileUrl }: TEnhancedViewerProps) => {
               highlightPluginInstance,
             ]}
             theme="dark"
-            // enableSmoothScroll={true}
+            enableSmoothScroll={true}
           />
         </Worker>
       </div>

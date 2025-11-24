@@ -1,6 +1,6 @@
 'use client';
 
-import { FileUpload, EnhancedViewer } from '@/ui';
+import { FileUpload, PDFViewerCore } from '@/ui';
 import { cn } from '@/utils';
 import { usePdfActions, usePdfValues, usePdfEffects } from '@/hooks';
 
@@ -39,7 +39,7 @@ export default function Home() {
           </FileUpload>
         )}
         {values.mode !== 'uploader' && values.fileUrl && (
-          <EnhancedViewer fileUrl={values.fileUrl} />
+          <PDFViewerCore fileUrl={values.fileUrl} />
         )}
       </main>
     </div>

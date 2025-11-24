@@ -1,20 +1,36 @@
+'use client';
 import type {
   ZoomPlugin,
   RenderZoomInProps,
   RenderZoomOutProps,
 } from '@react-pdf-viewer/zoom';
+import { SpecialZoomLevel } from '@react-pdf-viewer/core';
 import { Button } from '../../button';
 import { cn } from '@/utils';
-
+import { useToolbarValues } from '@/hooks';
+import { useEffect } from 'react';
 export const CustomZoom = ({
   zoomPluginInstance,
 }: {
   zoomPluginInstance: ZoomPlugin;
 }) => {
-  const { ZoomOut, Zoom, ZoomIn } = zoomPluginInstance;
+  const { ZoomOut, Zoom, ZoomIn, zoomTo } = zoomPluginInstance;
+  const { activePanels } = useToolbarValues();
+  const forceFit = activePanels.has('highlight');
 
+  useEffect(() => {
+    if (forceFit) {
+      zoomTo(SpecialZoomLevel.PageWidth);
+    }
+  }, [forceFit, zoomTo]);
   return (
-    <div className="flex flex-row items-center justify-center gap-2">
+    <div
+      className={cn(
+        'flex flex-row items-center justify-center gap-2 place-self-center rounded-xl px-4 py-1',
+        forceFit &&
+          'pointer-events-none w-fit bg-gray-400 [&_span]:text-gray-500',
+      )}
+    >
       <ZoomOut>
         {({ onClick }: RenderZoomOutProps) => (
           <Button
@@ -25,8 +41,9 @@ export const CustomZoom = ({
               'flex items-center justify-center text-[20px]',
               'hover:bg-off-white hover:border-neutral-700 hover:text-neutral-700',
             )}
+            disabled={forceFit}
           >
-            <span className="pb-1"> -</span>
+            <span className={cn('pb-1', forceFit && 'text-off-white!')}>-</span>
           </Button>
         )}
       </ZoomOut>
@@ -43,8 +60,9 @@ export const CustomZoom = ({
             )}
             variant="none"
             onClick={onClick}
+            disabled={forceFit}
           >
-            <span className="pb-1">+</span>
+            <span className={cn('pb-1', forceFit && 'text-off-white!')}>+</span>
           </Button>
         )}
       </ZoomIn>
