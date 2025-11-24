@@ -54,10 +54,10 @@ const RenderHighlightTarget = ({
                   actions.addNewNote(
                     {
                       id: values.notes.length + 1,
-                      content: values.noteMessage,
                       highlightAreas: props.highlightAreas,
                       quote: props.selectedText,
                       isHighlight: true,
+                      isRedactor: false,
                     },
                     version,
                   );
@@ -66,6 +66,24 @@ const RenderHighlightTarget = ({
               >
                 <BasicIcon name="editMarker" />
               </Button>
+              <Button
+                className="group/highlight"
+                onClick={() => {
+                  actions.addNewNote(
+                    {
+                      id: values.notes.length + 1,
+                      highlightAreas: props.highlightAreas,
+                      quote: props.selectedText,
+                      isHighlight: false,
+                      isRedactor: true,
+                    },
+                    version,
+                  );
+                  props.cancel();
+                }}
+              >
+                <BasicIcon name="brush" />
+              </Button>
             </div>
           </TooltipTrigger>
           <TooltipContent>
@@ -73,7 +91,7 @@ const RenderHighlightTarget = ({
               style={{ width: '200px' }}
               className="text-off-white text-[16px]"
             >
-              Add a note or highlight
+              Add a note, redact or highlight
             </div>
           </TooltipContent>
         </Tooltip>
@@ -116,7 +134,7 @@ const RenderHighlightContent = ({
           onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
             actions.setSingleNoteMessage(e.target.value)
           }
-        ></textarea>
+        />
       </div>
       <div
         style={{
@@ -134,6 +152,7 @@ const RenderHighlightContent = ({
                   highlightAreas: props.highlightAreas,
                   quote: props.selectedText,
                   isHighlight: false,
+                  isRedactor: false,
                 },
                 version,
               );
@@ -166,8 +185,8 @@ const RenderHighlights = ({ props, values }: TRenderHighlights) => {
                 style={Object.assign(
                   {},
                   {
-                    background: 'yellow',
-                    opacity: 0.4,
+                    background: note.isRedactor ? 'black' : 'yellow',
+                    opacity: note.isRedactor ? 1 : 0.4,
                   },
                   props.getCssProperties(area, props.rotation),
                 )}

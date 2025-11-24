@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { TPdfVersion, TPdfAnnotationData, TContentOperation } from '@/types';
 import { persist } from 'zustand/middleware';
-
+import { LOCAL_STORAGE_KEYS } from '@/constants';
 export type TPDFStoreActions = {
   setCurrentFile: (file: File | null) => void;
   setDocId: (id: string) => void;
@@ -91,7 +91,7 @@ export const usePdfStore = create(
       },
     }),
     {
-      name: 'pdf-store',
+      name: LOCAL_STORAGE_KEYS.pdfStore,
       // partialize: (state) => {
       //   const { actions: _, ...persisted } = state;
       //   // eslint-disable-next-line @typescript-eslint/no-explicit-any

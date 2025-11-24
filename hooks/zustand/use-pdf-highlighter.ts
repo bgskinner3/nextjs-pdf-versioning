@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware';
 import { TPdfVersion, TNote } from '@/types';
 import { PdfService } from '@/service';
 import { mapNoteToAnnotationData } from '@/utils';
-
+import { LOCAL_STORAGE_KEYS } from '@/constants';
 export type THighlighterValues = {
   noteMessage: string;
 
@@ -61,7 +61,7 @@ const useHighlighterStore = create<THighlighterStore>()(
       },
     }),
     {
-      name: 'highlighter-storage', // key in localStorage
+      name: LOCAL_STORAGE_KEYS.highlighterStore, // key in localStorage
       partialize: (state) => ({ notes: state.notes }), // only persist notes
     },
   ),

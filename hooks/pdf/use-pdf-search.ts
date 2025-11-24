@@ -1,6 +1,12 @@
 import { useState, useCallback } from 'react';
 import type { SearchPlugin } from '@react-pdf-viewer/search';
 
+/**
+ *
+ * usePdfSearch
+ *
+ * Search hook for search functionality in tool bar
+ */
 export const usePdfSearch = (searchPluginInstance: SearchPlugin) => {
   const [query, setQuery] = useState<string>('');
   const [error, setError] = useState<string | null>(null);

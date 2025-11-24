@@ -28,6 +28,7 @@ type TNote = {
   highlightAreas: HighlightArea[];
   quote: string;
   isHighlight: boolean;
+  isRedactor: boolean;
 };
 
 export type { TIconProps, Rect, Point, TFontInfo, TTypeGuard, TNote };

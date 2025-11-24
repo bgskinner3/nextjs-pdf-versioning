@@ -9,9 +9,8 @@ import '@react-pdf-viewer/properties/lib/styles/index.css';
 import { Viewer, Worker, SpecialZoomLevel } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import { searchPlugin } from '@react-pdf-viewer/search';
-import { SearchViewer } from './search-viewer';
 import { zoomPlugin } from '@react-pdf-viewer/zoom';
-import { cn } from '@/utils';
+import { cn, ObjectUtils } from '@/utils';
 import { BasicIcon } from '../icon';
 import { Button } from '../button';
 import {
@@ -20,8 +19,8 @@ import {
   useHighlighterValues,
   useHighlighterActions,
   usePdfValues,
+  usePdfActions,
 } from '@/hooks';
-import { CustomZoom } from './tool-bar';
 import { selectionModePlugin } from '@react-pdf-viewer/selection-mode';
 import {
   highlightPlugin,
@@ -33,16 +32,19 @@ import {
   RenderHighlights,
   RenderHighlightTarget,
   SidebarNotes,
+  CustomZoom,
+  SearchViewer,
 } from './tool-bar-items';
-
+import { LOCAL_STORAGE_KEYS } from '@/constants';
 type TEnhancedViewerProps = {
   fileUrl: string;
 };
 
 export const EnhancedViewer = ({ fileUrl }: TEnhancedViewerProps) => {
   const pdfValues = usePdfValues();
+  const pdfActions = usePdfActions();
   const values = useHighlighterValues();
-  const actions = useHighlighterActions();
+  const highlighterActions = useHighlighterActions();
   const { togglePanel } = useToolbarActions();
   const { activePanels } = useToolbarValues();
   const zoomPluginInstance = zoomPlugin({});
@@ -51,8 +53,8 @@ export const EnhancedViewer = ({ fileUrl }: TEnhancedViewerProps) => {
 
   const highlightPluginInstance = highlightPlugin({
     trigger: Trigger.None,
-    /* prettier-ignore */ renderHighlightTarget: (props) => <RenderHighlightTarget props={props} actions={actions} values={values} version={pdfValues.currentVersion!}  />,
-    /* prettier-ignore */ renderHighlightContent: (props) => <RenderHighlightContent props={props} actions={actions} values={values} version={pdfValues.currentVersion!} />,
+    /* prettier-ignore */ renderHighlightTarget: (props) => <RenderHighlightTarget props={props} actions={highlighterActions} values={values} version={pdfValues.currentVersion!}  />,
+    /* prettier-ignore */ renderHighlightContent: (props) => <RenderHighlightContent props={props} actions={highlighterActions} values={values} version={pdfValues.currentVersion!} />,
     /* prettier-ignore */ renderHighlights: (props) =>    <RenderHighlights props={props} values={values} />,
   });
   const defaultLayoutPluginInstance = defaultLayoutPlugin({
@@ -63,25 +65,25 @@ export const EnhancedViewer = ({ fileUrl }: TEnhancedViewerProps) => {
           <SidebarNotes
             values={values}
             highlightPluginInstance={highlightPluginInstance}
-            actions={actions}
+            actions={highlighterActions}
           />
         ),
         icon: <MessageIcon />,
         title: 'Notes',
       }),
     renderToolbar: (Toolbar) => (
-      <div className="shadow-dark-400 flex h-full w-full py-1">
+      <div className="shadow-dark-300 flex h-[50px] w-full items-center bg-inherit">
         <Toolbar>
-          {(props) => {
+          {(_) => {
             return (
               <div
                 className={cn(
-                  'grid',
-                  'grid-cols-3',
+                  'grid h-full',
+                  'grid-cols-3 pt-1',
                   'container max-w-none 2xl:container',
                 )}
               >
-                <div className="flex flex-row gap-x-2">
+                <div className="flex h-full flex-row items-center gap-x-2">
                   <Button
                     className={cn(
                       'group rounded-xl hover:bg-neutral-700',
@@ -124,12 +126,31 @@ export const EnhancedViewer = ({ fileUrl }: TEnhancedViewerProps) => {
                 </div>
                 <CustomZoom zoomPluginInstance={zoomPluginInstance} />
                 <div
-                  className={cn('flex h-full w-full items-center justify-end')}
+                  className={cn(
+                    'flex h-full w-full items-center justify-end gap-x-4',
+                    'y-2',
+                  )}
                 >
-                  <Button variant="none" className="p-0 md:p-0">
-                    Commit Version
+                  <Button
+                    variant="solid"
+                    className="flex max-h-[30px] w-full max-w-[120px] justify-center rounded-md border"
+                  >
+                    Commit
                   </Button>
-                  <props.ShowProperties />
+                  <Button
+                    variant="solid"
+                    className="flex max-h-[30px] w-full max-w-[120px] justify-center rounded-md border"
+                    onClick={() => {
+                      pdfActions.reset({});
+                      highlighterActions.resetNotes();
+                      ObjectUtils.keys(LOCAL_STORAGE_KEYS).forEach((value) =>
+                        localStorage.removeItem(value),
+                      );
+                    }}
+                  >
+                    New
+                  </Button>
+                  {/* <props.ShowProperties /> */}
                 </div>
               </div>
             );

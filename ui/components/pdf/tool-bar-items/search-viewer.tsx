@@ -1,5 +1,5 @@
 import type { SearchPlugin } from '@react-pdf-viewer/search';
-import { Button } from '../button';
+import { Button } from '../../button';
 import { cn } from '@/utils';
 import { useToolbarValues } from '@/hooks';
 import { usePdfSearch } from '@/hooks';
