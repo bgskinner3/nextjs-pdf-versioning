@@ -1,17 +1,18 @@
 import { db } from '../db-service';
 import { v4 as uuidv4 } from 'uuid';
-import { TPdfDocument, TPdfVersion } from '@/types';
+import {
+  TPdfDocument,
+  TPdfVersion,
+  TPdfAnnotation,
+  TPdfAnnotationData,
+} from '@/types';
+
 export class PdfService {
   private static createNewDocument(
     docId: string,
     fileName: string,
   ): TPdfDocument {
-    return {
-      id: docId,
-      name: fileName,
-      currentVersion: 1,
-      createdAt: new Date(),
-    };
+    /* prettier-ignore */ return { id: docId, name: fileName, currentVersion: 1, createdAt: new Date() };
   }
 
   private static createInitialVersion(
@@ -19,15 +20,7 @@ export class PdfService {
     file: File,
     message = 'Initial Upload (V1)',
   ): TPdfVersion {
-    return {
-      docId,
-      version: 1,
-      message,
-      timestamp: new Date(),
-      fileBlob: file,
-      annotations: [],
-      contentOps: [],
-    };
+    /* prettier-ignore */ return { docId, version: 1, message, timestamp: new Date(), fileBlob: file, annotations: [], contentOps: [] };
   }
 
   private static createNextVersion(
@@ -36,15 +29,7 @@ export class PdfService {
     file: File,
     message: string,
   ): TPdfVersion {
-    return {
-      docId,
-      version: currentVersion + 1,
-      message,
-      timestamp: new Date(),
-      fileBlob: file,
-      annotations: [],
-      contentOps: [],
-    };
+    /* prettier-ignore */ return { docId, version: currentVersion + 1, message, timestamp: new Date(), fileBlob: file, annotations: [], contentOps: [] };
   }
 
   static async createDocument(file: File): Promise<string> {
@@ -95,5 +80,28 @@ export class PdfService {
       return db.getContentOpsForPage(docId, version, page);
     }
     return db.contentOps.where('docId').equals(docId).toArray();
+  }
+
+  static async getDocumentFile(docId: string): Promise<Blob | null> {
+    const versions = await this.getVersions(docId);
+    if (!versions.length) return null;
+
+    const latestVersion = versions[versions.length - 1];
+    return latestVersion.fileBlob;
+  }
+
+  static async saveAnnotation(
+    docId: string,
+    version: number,
+    annotationData: TPdfAnnotationData,
+  ): Promise<number> {
+    const annotation: Omit<TPdfAnnotation, 'id'> = {
+      docId: docId,
+      version: version,
+      data: annotationData,
+      timestamp: new Date(),
+    };
+    const id = await db.annotations.add(annotation as TPdfAnnotation);
+    return id;
   }
 }

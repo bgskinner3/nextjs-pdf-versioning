@@ -1,22 +1,21 @@
 import { create } from 'zustand';
 
-
 export type TToolbarPanel =
   | 'search'
   | 'zoom'
   | 'settings'
   | 'outline'
-  | 'thumbnails'
-  | null;
-
+  | 'highlight';
 
 export type TToolbarStoreValues = {
-  activePanel: TToolbarPanel;
+  activePanels: Set<TToolbarPanel>;
 };
+
+
 export type TToolbarStoreActions = {
-  setActivePanel: (panel: TToolbarPanel) => void;
-  togglePanel: (panel: NonNullable<TToolbarPanel>) => void;
-  closePanel: () => void;
+  setActivePanels: (panels: TToolbarPanel[]) => void;
+  togglePanel: (panel: TToolbarPanel) => void;
+  closePanel: (panel?: TToolbarPanel) => void;
   reset: (opts?: TResetOptions) => void;
 };
 
@@ -28,37 +27,49 @@ type TResetOptions = {
   retain?: Array<keyof Omit<TToolbarStore, 'actions'>>;
 };
 
-
 const usePdfToolbarStore = create<TToolbarStore>((set, get) => ({
-  activePanel: "search",
+  activePanels: new Set(['search']),
 
   actions: {
-    setActivePanel: (panel) => set({ activePanel: panel }),
+    setActivePanels: (panels) => set({ activePanels: new Set(panels) }),
 
     togglePanel: (panel) => {
       const state = get();
-      set({
-        activePanel: state.activePanel === panel ? null : panel,
-      });
+      const newSet = new Set(state.activePanels);
+      if (newSet.has(panel)) {
+        newSet.delete(panel);
+      } else {
+        newSet.add(panel);
+      }
+      set({ activePanels: newSet });
     },
 
-    closePanel: () => set({ activePanel: null }),
+    closePanel: (panel) => {
+      const state = get();
+      if (panel) {
+        const newSet = new Set(state.activePanels);
+        newSet.delete(panel);
+        set({ activePanels: newSet });
+      } else {
+        set({ activePanels: new Set() });
+      }
+    },
 
     reset: ({ retain = [] }: TResetOptions = {}) => {
       const state = get();
-
       set({
-        activePanel: retain.includes('activePanel')
-          ? state.activePanel
-          : null,
+        activePanels: retain.includes('activePanels')
+          ? state.activePanels
+          : new Set(),
         actions: state.actions,
       });
     },
   },
 }));
+
 export const useToolbarValues = () => {
-  const activePanel = usePdfToolbarStore((state) => state.activePanel);
-  return { activePanel };
+  const activePanels = usePdfToolbarStore((state) => state.activePanels);
+  return { activePanels };
 };
 /**
  * A selector hook that returns all toolbar actions.
@@ -80,4 +91,3 @@ export const useToolbarValues = () => {
  */
 export const useToolbarActions = () =>
   usePdfToolbarStore((state) => state.actions);
-

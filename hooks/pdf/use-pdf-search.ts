@@ -35,9 +35,8 @@ export const usePdfSearch = (searchPluginInstance: SearchPlugin) => {
     const result = jumpToNextMatch();
 
     if (result) {
-      setCurrentMatch(prev => (prev + 1) % totalMatches);
+      setCurrentMatch((prev) => (prev + 1) % totalMatches);
     }
-
   }, [jumpToNextMatch, totalMatches]);
 
   const prev = useCallback(() => {
@@ -45,12 +44,9 @@ export const usePdfSearch = (searchPluginInstance: SearchPlugin) => {
 
     const result = jumpToPreviousMatch();
     if (result) {
-      setCurrentMatch(prev => (prev - 1 + totalMatches) % totalMatches);
+      setCurrentMatch((prev) => (prev - 1 + totalMatches) % totalMatches);
     }
-
-
   }, [jumpToPreviousMatch, totalMatches]);
-
 
   const clear = useCallback(() => {
     clearHighlights();
@@ -60,8 +56,8 @@ export const usePdfSearch = (searchPluginInstance: SearchPlugin) => {
     setTotalMatches(0);
   }, [clearHighlights]);
   const hasMatches = totalMatches > 0;
-  const matchCounter = totalMatches > 0 ? `${currentMatch + 1} / ${totalMatches}` : '0 / 0';
-
+  const matchCounter =
+    totalMatches > 0 ? `${currentMatch + 1} / ${totalMatches}` : '0 / 0';
 
   return {
     query,
@@ -75,6 +71,6 @@ export const usePdfSearch = (searchPluginInstance: SearchPlugin) => {
     next,
     prev,
     clear,
-    setError
+    setError,
   };
 };

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { TPdfVersion, TPdfAnnotationData } from '@/types';
-import { ObjectUtils } from '@/utils';
+import { TPdfVersion, TPdfAnnotationData, TContentOperation } from '@/types';
+import { persist } from 'zustand/middleware';
 
 export type TPDFStoreActions = {
   setCurrentFile: (file: File | null) => void;
@@ -9,8 +9,10 @@ export type TPDFStoreActions = {
   setFileUrl: (url: string) => void;
   setMode: (mode: 'uploader' | 'edit') => void;
   setAnnotations: (annotations: TPdfAnnotationData[]) => void;
+  addAnnotation: (annotation: TPdfAnnotationData) => void;
   reset: ({ retain }: TResetOptions) => void;
   setError: (error: string | null) => void;
+  setContentOps: (contentOps: TContentOperation[]) => void;
 };
 export type TPDFStoreValues = {
   currentFile: File | null;
@@ -19,6 +21,7 @@ export type TPDFStoreValues = {
   fileUrl: string | null;
   mode: 'uploader' | 'edit';
   annotations: TPdfAnnotationData[];
+  contentOps: TContentOperation[];
   errorMessage: string | null;
 };
 type TPDFStore = {
@@ -27,6 +30,7 @@ type TPDFStore = {
 type TResetOptions = {
   retain?: Array<keyof Omit<TPDFStore, 'actions'>>;
 };
+
 /**
  * Zustand pdf store
  *
@@ -39,41 +43,72 @@ type TResetOptions = {
  * - Offers convenient actions to update, reset, or modify state slices.
  *
  */
-const usePdfStore = create<TPDFStore>((set, get) => ({
-  currentFile: null,
-  docId: null,
-  currentVersion: null,
-  fileUrl: null,
-  mode: 'uploader',
-  annotations: [],
-  errorMessage: null,
-  actions: {
-    setCurrentFile: (file) => set({ currentFile: file }),
-    setDocId: (id) => set({ docId: id }),
-    setCurrentVersion: (version) => set({ currentVersion: version }),
-    setFileUrl: (url) => set({ fileUrl: url }),
-    setMode: (mode) => set({ mode }),
-    setAnnotations: (annotations) => set({ annotations }),
-    setError: (errorMessage) => set({ errorMessage }),
-    reset: ({ retain = [] }: TResetOptions = {}) => {
-      const state = get();
-      set({
-        currentFile: retain.includes('currentFile') ? state.currentFile : null,
-        docId: retain.includes('docId') ? state.docId : null,
-        currentVersion: retain.includes('currentVersion')
-          ? state.currentVersion
-          : null,
-        fileUrl: retain.includes('fileUrl') ? state.fileUrl : null,
-        mode: retain.includes('mode') ? state.mode : 'uploader',
-        annotations: retain.includes('annotations') ? state.annotations : [],
-        errorMessage: retain.includes('errorMessage')
-          ? state.errorMessage
-          : null,
-        actions: state.actions,
-      });
+export const usePdfStore = create(
+  persist<TPDFStore>(
+    (set, get) => ({
+      currentFile: null,
+      docId: null,
+      currentVersion: null,
+      fileUrl: null,
+      mode: 'uploader',
+      annotations: [],
+      contentOps: [],
+      errorMessage: null,
+      actions: {
+        setCurrentFile: (file) => set({ currentFile: file }),
+        setDocId: (id) => set({ docId: id }),
+        setCurrentVersion: (version) => set({ currentVersion: version }),
+        setContentOps: (contentOps) => set({ contentOps }),
+        setFileUrl: (url) => set({ fileUrl: url }),
+        setMode: (mode) => set({ mode }),
+        setAnnotations: (annotations) => set({ annotations }),
+        addAnnotation: (annotation) =>
+          set((state) => ({
+            annotations: [...state.annotations, annotation],
+          })),
+        setError: (errorMessage) => set({ errorMessage }),
+        reset: ({ retain = [] }: TResetOptions = {}) => {
+          const state = get();
+          set({
+            currentFile: retain.includes('currentFile')
+              ? state.currentFile
+              : null,
+            docId: retain.includes('docId') ? state.docId : null,
+            currentVersion: retain.includes('currentVersion')
+              ? state.currentVersion
+              : null,
+            fileUrl: retain.includes('fileUrl') ? state.fileUrl : null,
+            mode: retain.includes('mode') ? state.mode : 'uploader',
+            annotations: retain.includes('annotations')
+              ? state.annotations
+              : [],
+            errorMessage: retain.includes('errorMessage')
+              ? state.errorMessage
+              : null,
+            actions: state.actions,
+          });
+        },
+      },
+    }),
+    {
+      name: 'pdf-store',
+      // partialize: (state) => {
+      //   const { actions: _, ...persisted } = state;
+      //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      //   return persisted as any;
+      // },
+      partialize: (state) =>
+        ({
+          docId: state.docId,
+          currentVersion: state.currentVersion,
+          mode: state.mode,
+          annotations: state.annotations,
+          errorMessage: state.errorMessage,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        }) as any,
     },
-  },
-}));
+  ),
+);
 
 export const usePdfValues = () => {
   const mode = usePdfStore((state) => state.mode);
@@ -83,6 +118,7 @@ export const usePdfValues = () => {
   const currentFile = usePdfStore((state) => state.currentFile);
   const fileUrl = usePdfStore((state) => state.fileUrl);
   const errorMessage = usePdfStore((state) => state.errorMessage);
+  const contentOps = usePdfStore((state) => state.contentOps);
   return {
     currentFile,
     fileUrl,
@@ -91,6 +127,7 @@ export const usePdfValues = () => {
     mode,
     annotations,
     errorMessage,
+    contentOps,
   };
 };
 

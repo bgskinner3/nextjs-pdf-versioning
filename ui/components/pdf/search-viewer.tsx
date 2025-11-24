@@ -1,18 +1,16 @@
 import type { SearchPlugin } from '@react-pdf-viewer/search';
 import { Button } from '../button';
 import { cn } from '@/utils';
-import { useToolbarActions, useToolbarValues } from '@/hooks';
+import { useToolbarValues } from '@/hooks';
 import { usePdfSearch } from '@/hooks';
-
 
 export const SearchViewer = ({
   searchPluginInstance,
 }: {
   searchPluginInstance: SearchPlugin;
 }) => {
-  const { activePanel } = useToolbarValues();
+  const { activePanels } = useToolbarValues();
   const searchItems = usePdfSearch(searchPluginInstance);
-
 
   return (
     <div
@@ -25,7 +23,7 @@ export const SearchViewer = ({
         'data-[active=true]:max-h-[100px] data-[active=true]:py-3',
       )}
       data-has-error={!!searchItems.error}
-      data-active={activePanel === 'search'}
+      data-active={activePanels.has('search')}
     >
       <input
         type="text"

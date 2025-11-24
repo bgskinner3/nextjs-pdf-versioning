@@ -11,3 +11,10 @@ export const isObject: TTypeGuard<object> = <T extends object, U>(
   term: T | U,
 ): term is NonNullable<T> =>
   !isNull(term) && !isArray(term) && typeof term === 'object';
+
+export function isInstanceOf<T extends object, Args extends unknown[]>(
+  value: unknown,
+  constructor: new (...args: Args) => T,
+): value is T {
+  return value instanceof constructor;
+}
