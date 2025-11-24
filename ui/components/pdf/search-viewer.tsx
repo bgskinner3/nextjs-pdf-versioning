@@ -1,72 +1,38 @@
-import { useState } from 'react';
 import type { SearchPlugin } from '@react-pdf-viewer/search';
 import { Button } from '../button';
 import { cn } from '@/utils';
+import { useToolbarActions, useToolbarValues } from '@/hooks';
+import { usePdfSearch } from '@/hooks';
+
 
 export const SearchViewer = ({
   searchPluginInstance,
 }: {
   searchPluginInstance: SearchPlugin;
 }) => {
-  const [query, setQuery] = useState<string>('');
-  const [error, setError] = useState<string>('');
-  const [currentMatch, setCurrentMatch] = useState<number>(0);
-  const [totalMatches, setTotalMatches] = useState<number>(0);
+  const { activePanel } = useToolbarValues();
+  const searchItems = usePdfSearch(searchPluginInstance);
 
-  const { highlight, clearHighlights, jumpToNextMatch, jumpToPreviousMatch } =
-    searchPluginInstance;
-
-  const handleSearch = async () => {
-    if (!query) return;
-
-    const matches = await highlight(query); // returns Match[]
-    if (matches.length === 0) {
-      setTotalMatches(0);
-      setCurrentMatch(0);
-      setError('No text found in this PDF or no matches found.');
-      return;
-    }
-
-    setTotalMatches(matches.length);
-    setCurrentMatch(matches.length > 0 ? 0 : 0);
-  };
-
-  const handleNext = () => {
-    const result = jumpToNextMatch();
-    if (!result) return;
-
-    setCurrentMatch(result.matchIndex);
-  };
-
-  const handlePrev = () => {
-    const result = jumpToPreviousMatch();
-    if (!result) return;
-
-    setCurrentMatch(result.matchIndex - 1);
-  };
-
-  const handleClear = () => {
-    clearHighlights();
-    setQuery('');
-    setError('');
-    setCurrentMatch(0);
-    setTotalMatches(0);
-  };
 
   return (
     <div
       className={cn(
-        'flex items-center gap-2 border-b bg-[#1a1a1a] p-3',
+        'flex items-center gap-2 border-b bg-[#1a1a1a] px-3',
         'group/input',
+        'transition-all duration-500 ease-in',
+        'max-h-0 origin-top overflow-hidden py-0',
+        'data-[active=false]:pointer-events-none',
+        'data-[active=true]:max-h-[100px] data-[active=true]:py-3',
       )}
-      data-has-error={!!error}
+      data-has-error={!!searchItems.error}
+      data-active={activePanel === 'search'}
     >
       <input
         type="text"
-        value={query}
+        value={searchItems.query}
         onChange={(e) => {
-          setQuery(e.target.value);
-          setError('');
+          searchItems.setQuery(e.target.value);
+          searchItems.setError('');
         }}
         placeholder="Search PDF"
         className={cn(
@@ -78,7 +44,7 @@ export const SearchViewer = ({
       />
 
       <Button
-        onClick={handleSearch}
+        onClick={searchItems.search}
         className={cn(
           'group-data-[has-error=true]/input:border-red-500',
           'group-data-[has-error=true]/input:animate-shake',
@@ -88,27 +54,26 @@ export const SearchViewer = ({
       </Button>
 
       <Button
-        onClick={handlePrev}
-        disabled={totalMatches === 0}
+        onClick={searchItems.prev}
+        disabled={searchItems.totalMatches === 0}
         className="rounded-md border px-3 py-2 text-sm disabled:opacity-40"
       >
         Prev
       </Button>
 
       <Button
-        onClick={handleNext}
-        disabled={totalMatches === 0}
+        onClick={searchItems.next}
+        disabled={searchItems.totalMatches === 0}
         className="rounded-md border px-3 py-2 text-sm disabled:opacity-40"
       >
         Next
       </Button>
 
-      {/* Match Counter */}
       <span className="w-14 text-center text-xs text-gray-600">
-        {totalMatches > 0 ? `${currentMatch + 1} / ${totalMatches}` : '0 / 0'}
+        {searchItems.matchCounter}
       </span>
 
-      <Button onClick={handleClear}>Clear</Button>
+      <Button onClick={searchItems.clear}>Clear</Button>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import {  useEffect } from 'react';
 import { FileUpload, EnhancedViewer } from '@/ui';
 import { cn } from '@/utils';
 import { usePdfActions, usePdfValues } from '@/hooks';

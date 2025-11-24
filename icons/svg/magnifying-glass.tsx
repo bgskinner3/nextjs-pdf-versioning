@@ -12,7 +12,7 @@ const MagnifyingGlass = forwardRef<SVGSVGElement, TIconProps>((props, ref) => {
       ref={ref}
       {...props}
     >
-      <title>Magnifying Glass</title>
+      <title>Search</title>
       <path
         fillRule="evenodd"
         clipRule="evenodd"
