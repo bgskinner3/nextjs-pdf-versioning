@@ -8,7 +8,7 @@ type TPdfDocument = {
   id?: string;
   name: string;
   currentVersion: number;
-  //  createdAt: Date;
+  createdAt: Date;
 };
 type TPdfAnnotation = {
   id?: number;

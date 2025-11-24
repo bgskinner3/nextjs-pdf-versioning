@@ -14,10 +14,6 @@ export class AppDB extends Dexie {
 
   constructor() {
     super('PdfEditorDB');
-    // this.version(1).stores({
-    //   documents: 'id, name, currentVersion',
-    //   versions: '++id, docId, version, timestamp',
-    // });
     this.version(1).stores({
       documents: 'id, name, currentVersion, createdAt',
       versions: '++id, docId, version, timestamp',
@@ -41,25 +37,3 @@ export class AppDB extends Dexie {
 }
 
 export const db = new AppDB();
-
-// export type TPdfVersion = {
-//   id?: number;
-//   docId: string;
-//   version: number;
-//   message: string;
-//   timestamp: Date;
-//   fileBlob: Blob;
-// };
-
-// export type TPdfDocument = {
-//   id?: string;
-//   name: string;
-//   currentVersion: number;
-// };
-// export type TPdfAnnotation = {
-//   id?: number;
-//   docId: string;
-//   version: number;
-//   data: any;      // JSON representing annotations
-//   timestamp: Date;
-// };

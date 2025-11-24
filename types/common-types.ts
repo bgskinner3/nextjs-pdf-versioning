@@ -1,6 +1,7 @@
 // ./types/common-types
 import type { ComponentPropsWithoutRef } from 'react';
-import type { TPdfAnnotationData } from './annotation-types';
+
+type TTypeGuard<T> = (value: unknown) => value is T;
 
 type TIconProps = {} & ComponentPropsWithoutRef<'svg'>;
 
@@ -22,4 +23,4 @@ type TFontInfo = {
   color?: string;
 };
 
-export type { TIconProps, Rect, Point, TFontInfo };
+export type { TIconProps, Rect, Point, TFontInfo, TTypeGuard };

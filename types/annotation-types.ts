@@ -1,6 +1,6 @@
 // ./types/annotation-types
 import type { Rect, Point } from './common-types';
-
+import type { PDFDocument } from 'pdf-lib';
 type THighlightAnnotation = {
   type: 'highlight';
   page: number;
@@ -45,6 +45,11 @@ type TPdfAnnotationData =
   | TRedactionAnnotation
   | TStickyNoteAnnotation;
 
+type TPDFLibAnnotationHandler = (
+  pdfDoc: PDFDocument,
+  ann: TPdfAnnotationData,
+) => Promise<void>;
+
 export type {
   THighlightAnnotation,
   TTextAnnotation,
@@ -52,4 +57,5 @@ export type {
   TRedactionAnnotation,
   TStickyNoteAnnotation,
   TPdfAnnotationData,
+  TPDFLibAnnotationHandler,
 };
