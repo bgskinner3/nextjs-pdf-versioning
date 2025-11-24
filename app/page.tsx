@@ -63,8 +63,6 @@ export default function Home() {
           <FileUpload action={handleFileUpload} handleMode={handleMode} />
         )}
         {mode !== 'uploader' && fileUrl && <EnhancedViewer fileUrl={fileUrl} />}
-        {/* {!mode !== 'uploader' && <EnhancedViewer fileUrl={fileUrl} />}
-         */}
       </main>
     </div>
   );

@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { TIconProps } from '@/types/common';
+import { TIconProps } from '@/types/common-types';
 
 const MagnifyingGlass = forwardRef<SVGSVGElement, TIconProps>((props, ref) => {
   return (
