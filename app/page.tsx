@@ -3,49 +3,16 @@
 import { useState, useCallback, useEffect } from 'react';
 import { FileUpload, EnhancedViewer } from '@/ui';
 import { cn } from '@/utils';
-import { PdfService } from '@/service';
-
+import { usePdfActions, usePdfValues } from '@/hooks';
 export default function Home() {
-  const [currentFile, setCurrentFile] = useState<File | null>(null);
-  const [docId, setDocId] = useState<string | null>(null);
-  const [fileUrl, setFileUrl] = useState<string | null>(null);
-  const [mode, setMode] = useState<'uploader' | 'edit'>('uploader');
-  const handleFileUpload = useCallback(async (files: File[]) => {
-    const file = files[0];
-    if (!file) return;
+  const values = usePdfValues();
+  const actions = usePdfActions();
 
-    // Validation: PDF only
-    if (file.type !== 'application/pdf') {
-      alert('Only PDF files are allowed.');
-      return;
-    }
-
-    setCurrentFile(file);
-
-    // 1. Save document + Version 1 via service
-    try {
-      const newDocId = await PdfService.createDocument(file);
-      setDocId(newDocId);
-    } catch (error) {
-      console.error('Failed to save document:', error);
-      return;
-    }
-
-    // 2. Generate object URL for the viewer
-    const url = URL.createObjectURL(file);
-    setFileUrl(url);
-  }, []);
-
-  // Clean up object URL when component unmounts or file changes
   useEffect(() => {
     return () => {
-      if (fileUrl) URL.revokeObjectURL(fileUrl);
+      if (values.fileUrl) URL.revokeObjectURL(values.fileUrl);
     };
-  }, [fileUrl]);
-
-  const handleMode = (mode: 'uploader' | 'edit') => {
-    setMode(mode);
-  };
+  }, [values.fileUrl]);
 
   return (
     <div
@@ -59,10 +26,26 @@ export default function Home() {
           'flex min-h-screen w-full max-w-3xl min-w-screen flex-col items-center justify-center bg-black sm:items-start',
         )}
       >
-        {mode === 'uploader' && (
-          <FileUpload action={handleFileUpload} handleMode={handleMode} />
+        {values.mode === 'uploader' && (
+          <FileUpload
+            actions={actions}
+            fileActions={<FileUpload.Actions actions={actions} />}
+            values={values}
+          >
+            <FileUpload.ContentContainer
+              errorMessage={values.errorMessage}
+              header={' Upload PDF'}
+              subHeader="Drag or drop your PDF files here or click to upload"
+            >
+              <FileUpload.LoaderStates currentFile={values.currentFile}>
+                <FileUpload.Backdrop />
+              </FileUpload.LoaderStates>
+            </FileUpload.ContentContainer>
+          </FileUpload>
         )}
-        {mode !== 'uploader' && fileUrl && <EnhancedViewer fileUrl={fileUrl} />}
+        {values.mode !== 'uploader' && values.fileUrl && (
+          <EnhancedViewer fileUrl={values.fileUrl} />
+        )}
       </main>
     </div>
   );

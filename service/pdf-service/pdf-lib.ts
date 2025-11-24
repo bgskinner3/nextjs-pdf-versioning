@@ -1,6 +1,5 @@
 import { PDFDocument } from 'pdf-lib';
 import { TPdfVersion, TPdfAnnotationData } from '@/types';
-
 import { annotationMapper } from './mapper';
 
 export class PdfLibService {
