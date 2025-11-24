@@ -9,7 +9,7 @@ export default function Home() {
   const [currentFile, setCurrentFile] = useState<File | null>(null);
   const [docId, setDocId] = useState<string | null>(null);
   const [fileUrl, setFileUrl] = useState<string | null>(null);
-
+  const [mode, setMode] = useState<'uploader' | 'edit'>('uploader');
   const handleFileUpload = useCallback(async (files: File[]) => {
     const file = files[0];
     if (!file) return;
@@ -42,6 +42,11 @@ export default function Home() {
       if (fileUrl) URL.revokeObjectURL(fileUrl);
     };
   }, [fileUrl]);
+
+  const handleMode = (mode: 'uploader' | 'edit') => {
+    setMode(mode);
+  };
+
   return (
     <div
       className={cn(
@@ -54,8 +59,12 @@ export default function Home() {
           'flex min-h-screen w-full max-w-3xl min-w-screen flex-col items-center justify-center bg-black sm:items-start',
         )}
       >
-        {!fileUrl && <FileUpload action={handleFileUpload} />}
-        {fileUrl && <EnhancedViewer fileUrl={fileUrl} />}
+        {mode === 'uploader' && (
+          <FileUpload action={handleFileUpload} handleMode={handleMode} />
+        )}
+        {mode !== 'uploader' && fileUrl && <EnhancedViewer fileUrl={fileUrl} />}
+        {/* {!mode !== 'uploader' && <EnhancedViewer fileUrl={fileUrl} />}
+         */}
       </main>
     </div>
   );

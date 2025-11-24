@@ -11,6 +11,8 @@
  *
  * ---
  * @see {@link CommonUtilsDocs.ObjectUtils}
+ * or repo
+ * @see {@link https://github.com/bgskinner3/ts-kit/blob/main/src/lib/common/common-utils.docs.d.ts}
  */
 export class ObjectUtils {
   /**
@@ -37,9 +39,6 @@ export class ObjectUtils {
    * Constructs an object from an array of entries with type safety.
    */
 
-  // static fromEntries<K extends string, V>(entries: [K, V][]): Record<K, V> {
-  //   return Object.fromEntries(entries) as Record<K, V>;
-  // }
   static fromEntries<
     K extends string | number | symbol = string, // default key type
     V = unknown,
