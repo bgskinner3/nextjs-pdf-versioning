@@ -24,7 +24,7 @@ import {
   useSafeHighlightPlugin,
   useToolbarValues,
 } from '@/hooks';
-
+import { ArrayUtils } from '@/utils';
 type TEnhancedViewerProps = {
   fileUrl: string;
 };
@@ -43,8 +43,12 @@ export const PDFViewerCore = ({ fileUrl }: TEnhancedViewerProps) => {
   const highlightPluginInstance = useSafeHighlightPlugin();
   const defaultLayoutPluginInstance = defaultLayoutPlugin({
     setInitialTab: (_doc) => Promise.resolve(0),
-    sidebarTabs: (defaultTabs) =>
-      defaultTabs.concat({
+    sidebarTabs: (defaultTabs) => {
+      const filtered = ArrayUtils.filter(
+        defaultTabs,
+        (item) => item.title !== 'Bookmark' && item.title !== 'Attachment',
+      );
+      return filtered.concat({
         content: (
           <SidebarNotes
             values={highlighterValues}
@@ -53,8 +57,9 @@ export const PDFViewerCore = ({ fileUrl }: TEnhancedViewerProps) => {
           />
         ),
         icon: <BasicIcon name="message" />,
-        title: 'Notes',
-      }),
+        title: 'Annotations',
+      });
+    },
     renderToolbar: (Toolbar) => (
       <div className="shadow-dark-300 flex h-[50px] w-full items-center bg-inherit">
         <Toolbar>

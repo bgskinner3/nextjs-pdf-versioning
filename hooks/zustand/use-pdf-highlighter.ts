@@ -6,7 +6,6 @@ import { mapNoteToAnnotationData } from '@/utils';
 import { LOCAL_STORAGE_KEYS } from '@/constants';
 export type THighlighterValues = {
   noteMessage: string;
-
   notes: TNote[];
 };
 

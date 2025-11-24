@@ -29,6 +29,7 @@ type TNote = {
   quote: string;
   isHighlight: boolean;
   isRedactor: boolean;
+  type: 'redactor' | 'highlight' | 'note';
 };
 
 export type { TIconProps, Rect, Point, TFontInfo, TTypeGuard, TNote };

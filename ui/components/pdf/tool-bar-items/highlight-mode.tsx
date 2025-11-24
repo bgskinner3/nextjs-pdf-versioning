@@ -59,6 +59,7 @@ const RenderHighlightTarget = ({
                       quote: props.selectedText,
                       isHighlight: true,
                       isRedactor: false,
+                      type: 'highlight',
                     },
                     version,
                   );
@@ -78,6 +79,7 @@ const RenderHighlightTarget = ({
                         quote: props.selectedText,
                         isHighlight: false,
                         isRedactor: true,
+                        type: 'redactor',
                       },
                       version,
                     );
@@ -155,6 +157,7 @@ const RenderHighlightContent = ({
                     content: values.noteMessage,
                     highlightAreas: props.highlightAreas,
                     quote: props.selectedText,
+                    type: 'note',
                     isHighlight: false,
                     isRedactor: false,
                   },
@@ -218,8 +221,8 @@ const SidebarNotes = ({
       'flex w-full max-w-[500px] flex-col items-center gap-2 overflow-hidden',
     )}
   >
-    <h2 className="p-3 text-2xl text-gray-500 uppercase">My Notes</h2>
-    {values.notes.length === 0 && <div>There is no note</div>}
+    <h2 className="p-3 text-2xl text-gray-500 uppercase">Annotations</h2>
+    <div className="hidden last:flex">No Annotations currently</div>
     {values.notes.map((note) => {
       return (
         <div

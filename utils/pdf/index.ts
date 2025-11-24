@@ -9,22 +9,42 @@ function highlightAreaToRect(area: HighlightArea): Rect {
     height: area.height,
   };
 }
+
 function mapNoteToAnnotationData(note: TNote): TPdfAnnotationData {
   const firstArea = note.highlightAreas[0];
-  return note.isHighlight
-    ? {
-        type: 'highlight',
-        page: firstArea.pageIndex + 1,
-        rect: highlightAreaToRect(firstArea),
-        opacity: 0.4,
-        color: 'yellow',
-      }
-    : {
-        type: 'sticky-note',
-        page: firstArea.pageIndex + 1,
-        position: highlightAreaToRect(firstArea),
-        content: note.content || '',
-      };
+  if (note.type === 'highlight') {
+    return {
+      type: 'highlight',
+      page: firstArea.pageIndex + 1,
+      rect: highlightAreaToRect(firstArea),
+      opacity: 0.4,
+      color: 'yellow',
+    };
+  }
+  if (note.type === 'note') {
+    return {
+      type: 'sticky-note',
+      page: firstArea.pageIndex + 1,
+      position: highlightAreaToRect(firstArea),
+      content: note.content || '',
+    };
+  }
+  if (note.type === 'redactor') {
+    return {
+      type: 'redaction',
+      page: firstArea.pageIndex + 1,
+      rect: highlightAreaToRect(firstArea),
+      fillColor: 'black',
+    };
+  }
+  return {
+    type: 'free-text',
+    page: firstArea.pageIndex + 1,
+    position: highlightAreaToRect(firstArea),
+    content: '',
+    fontSize: 12,
+    color: 'black',
+  };
 }
 
 const normalizeSelectionData = (
