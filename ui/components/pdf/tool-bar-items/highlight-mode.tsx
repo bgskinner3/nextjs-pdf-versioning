@@ -6,20 +6,28 @@ import {
 } from '@react-pdf-viewer/highlight';
 import { Fragment } from 'react';
 import type { THighlighterValues, THighlighterActions } from '@/hooks';
-import { Position, Tooltip } from '@react-pdf-viewer/core';
 import { Button } from '../../button';
 import { BasicIcon } from '../../icon';
 import type { ChangeEvent } from 'react';
 import type { HighlightPlugin } from '@react-pdf-viewer/highlight';
 import { cn } from '@/utils';
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from '../../tool-tip';
+import { TPdfVersion } from '@/types';
 const RenderHighlightTarget = ({
   props,
   values,
   actions,
+  version,
 }: {
   props: RenderHighlightTargetProps;
   values: THighlighterValues;
   actions: THighlighterActions;
+  version: TPdfVersion;
 }) => {
   return (
     <div
@@ -33,40 +41,43 @@ const RenderHighlightTarget = ({
         zIndex: 999,
       }}
     >
-      <Tooltip
-        position={Position.TopCenter}
-        target={
-          <div className="flex gap-x-2">
-            <Button onClick={props.toggle} className="group/note">
-              <MessageIcon />
-            </Button>
-            <Button
-              className="group/highlight"
-              onClick={() => {
-                actions.addNewNote({
-                  id: values.notes.length + 1,
-                  content: values.noteMessage,
-                  highlightAreas: props.highlightAreas,
-                  quote: props.selectedText,
-                  isHighlight: true,
-                });
-                props.cancel();
-              }}
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="flex gap-x-2">
+              <Button onClick={props.toggle} className="group/note">
+                <MessageIcon />
+              </Button>
+              <Button
+                className="group/highlight"
+                onClick={() => {
+                  actions.addNewNote(
+                    {
+                      id: values.notes.length + 1,
+                      content: values.noteMessage,
+                      highlightAreas: props.highlightAreas,
+                      quote: props.selectedText,
+                      isHighlight: true,
+                    },
+                    version,
+                  );
+                  props.cancel();
+                }}
+              >
+                <BasicIcon name="editMarker" />
+              </Button>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <div
+              style={{ width: '200px' }}
+              className="text-off-white text-[16px]"
             >
-              <BasicIcon name="editMarker" />
-            </Button>
-          </div>
-        }
-        content={() => (
-          <div
-            style={{ width: '200px' }}
-            className="text-off-white text-[16px]"
-          >
-            Add a note or highlight
-          </div>
-        )}
-        offset={{ left: 0, top: -8 }}
-      />
+              Add a note or highlight
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </div>
   );
 };
@@ -75,11 +86,13 @@ type TRenderHighlightContent = {
   props: RenderHighlightContentProps;
   actions: THighlighterActions;
   values: THighlighterValues;
+  version: TPdfVersion;
 };
 const RenderHighlightContent = ({
   props,
   actions,
   values,
+  version,
 }: TRenderHighlightContent) => {
   return (
     <div
@@ -114,13 +127,16 @@ const RenderHighlightContent = ({
         <div style={{ marginRight: '8px' }}>
           <Button
             onClick={() => {
-              actions.addNewNote({
-                id: values.notes.length + 1,
-                content: values.noteMessage,
-                highlightAreas: props.highlightAreas,
-                quote: props.selectedText,
-                isHighlight: false,
-              });
+              actions.addNewNote(
+                {
+                  id: values.notes.length + 1,
+                  content: values.noteMessage,
+                  highlightAreas: props.highlightAreas,
+                  quote: props.selectedText,
+                  isHighlight: false,
+                },
+                version,
+              );
               props.cancel();
             }}
           >

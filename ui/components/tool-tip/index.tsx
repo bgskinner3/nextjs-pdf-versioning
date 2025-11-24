@@ -18,13 +18,13 @@ const TooltipContent = forwardRef<
       sideOffset={sideOffset}
       alignOffset={-20}
       className={cn(
-        'body-14 rounded-md border border-black bg-black px-4 py-2.5 text-center wrap-break-word text-white shadow-md will-change-[transform,opacity]',
+        'body-14 rounded-md border border-black bg-black px-4 py-1 text-center wrap-break-word text-white shadow-md will-change-[transform,opacity]',
         'data-[side=left]:animate-slide-right-and-fade',
         'data-[side=bottom]:animate-slide-up-and-fade',
         'data-[side=right]:animate-slide-left-and-fade',
         'data-[side=top]:animate-slide-down-and-fade',
         'flex w-auto',
-        'data-[state=closed]:animate-fadeUpAndOut data-[state=closed]:delay-300',
+        'data-[state=closed]:animate-fade-up-and-out data-[state=closed]:delay-300',
         'data-[is-hidden=true]:hidden',
         'relative z-9999',
         className,

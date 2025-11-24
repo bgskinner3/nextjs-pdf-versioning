@@ -1,25 +1,19 @@
 import { create } from 'zustand';
-import { HighlightArea } from '@react-pdf-viewer/highlight';
 import { persist } from 'zustand/middleware';
-
-type TNote = {
-  id: number;
-  content?: string;
-  highlightAreas: HighlightArea[];
-  quote: string;
-  isHighlight: boolean;
-};
+import { TPdfVersion, TNote } from '@/types';
+import { PdfService } from '@/service';
+import { mapNoteToAnnotationData } from '@/utils';
 
 export type THighlighterValues = {
   noteMessage: string;
-  type: 'note' | 'highlight' | null;
+
   notes: TNote[];
 };
 
 export type THighlighterActions = {
   setSingleNoteMessage: (message: string) => void;
-  setType: (type: 'note' | 'highlight' | null) => void;
-  addNewNote: (note: TNote) => void;
+
+  addNewNote: (note: TNote, version: TPdfVersion) => void;
   updateNote: (id: number, content: Partial<TNote>) => void;
   deleteNote: (id: number) => void;
   resetNotes: () => void;
@@ -28,19 +22,26 @@ export type THighlighterActions = {
 type THighlighterStore = THighlighterValues & {
   actions: THighlighterActions;
 };
+
 const useHighlighterStore = create<THighlighterStore>()(
   persist(
     (set, get) => ({
       noteMessage: '',
       notes: [],
-      type: null,
+
       actions: {
         setSingleNoteMessage: (message: string) =>
           set({ noteMessage: message }),
-        setType: (type: 'note' | 'highlight' | null) => set({ type: type }),
-        addNewNote: (note: TNote) => {
+
+        addNewNote: async (note: TNote, version: TPdfVersion) => {
           const state = get();
-          set({ notes: [...state.notes, note], type: null });
+          set({ notes: [...state.notes, note] });
+
+          await PdfService.saveAnnotation(
+            version.docId,
+            version.version,
+            mapNoteToAnnotationData(note),
+          );
         },
 
         updateNote: (id: number, content: Partial<TNote>) => {
@@ -62,15 +63,14 @@ const useHighlighterStore = create<THighlighterStore>()(
     {
       name: 'highlighter-storage', // key in localStorage
       partialize: (state) => ({ notes: state.notes }), // only persist notes
-      // optional: migrate or version logic can be added here
     },
   ),
 );
 export const useHighlighterValues = () => {
   const noteMessage = useHighlighterStore((state) => state.noteMessage);
   const notes = useHighlighterStore((state) => state.notes);
-  const type = useHighlighterStore((state) => state.type);
-  return { noteMessage, notes, type };
+
+  return { noteMessage, notes };
 };
 
 export const useHighlighterActions = () => {

@@ -10,6 +10,7 @@ export default function Home() {
   const values = usePdfValues();
   const actions = usePdfActions();
   const { docId, currentFile, currentVersion } = values;
+  console.log(values);
   useEffect(() => {
     return () => {
       if (values.fileUrl) URL.revokeObjectURL(values.fileUrl);
@@ -30,19 +31,34 @@ export default function Home() {
   }, [docId, currentFile, actions]);
   useEffect(() => {
     if (docId && currentVersion) {
-      // Fetch and set annotations
       PdfService.getAnnotations(docId, currentVersion.version).then((anns) => {
-        // anns is TPdfAnnotation[], need to map to TPdfAnnotationData[]
         actions.setAnnotations(anns.map((a) => a.data));
       });
 
-      // Fetch and set content operations
       PdfService.getContentOps(docId, currentVersion.version).then((ops) => {
         actions.setContentOps(ops);
       });
     }
   }, [docId, currentVersion, actions]);
-  console.log(values.contentOps);
+  useEffect(() => {
+    if (docId && !currentVersion) {
+      PdfService.getVersions(docId).then((versions) => {
+        if (!versions.length) return;
+
+        const latest = versions[versions.length - 1];
+        actions.setCurrentVersion(latest);
+
+        // Optional: also set annotations from that version
+        PdfService.getAnnotations(docId, latest.version).then((anns) => {
+          actions.setAnnotations(anns.map((a) => a.data));
+        });
+
+        PdfService.getContentOps(docId, latest.version).then((ops) => {
+          actions.setContentOps(ops);
+        });
+      });
+    }
+  }, [docId, currentVersion, actions]);
   return (
     <div
       className={cn(

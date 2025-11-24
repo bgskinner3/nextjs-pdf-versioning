@@ -5,6 +5,7 @@ import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/search/lib/styles/index.css';
 import '@react-pdf-viewer/selection-mode/lib/styles/index.css';
 import '@react-pdf-viewer/highlight/lib/styles/index.css';
+import '@react-pdf-viewer/properties/lib/styles/index.css';
 import { Viewer, Worker, SpecialZoomLevel } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import { searchPlugin } from '@react-pdf-viewer/search';
@@ -18,6 +19,7 @@ import {
   useToolbarValues,
   useHighlighterValues,
   useHighlighterActions,
+  usePdfValues,
 } from '@/hooks';
 import { CustomZoom } from './tool-bar';
 import { selectionModePlugin } from '@react-pdf-viewer/selection-mode';
@@ -38,6 +40,7 @@ type TEnhancedViewerProps = {
 };
 
 export const EnhancedViewer = ({ fileUrl }: TEnhancedViewerProps) => {
+  const pdfValues = usePdfValues();
   const values = useHighlighterValues();
   const actions = useHighlighterActions();
   const { togglePanel } = useToolbarActions();
@@ -45,10 +48,11 @@ export const EnhancedViewer = ({ fileUrl }: TEnhancedViewerProps) => {
   const zoomPluginInstance = zoomPlugin({});
   const searchPluginInstance = searchPlugin({ enableShortcuts: true });
   const selectionModePluginInstance = selectionModePlugin();
+
   const highlightPluginInstance = highlightPlugin({
     trigger: Trigger.None,
-    /* prettier-ignore */ renderHighlightTarget: (props) => <RenderHighlightTarget props={props} actions={actions} values={values}  />,
-    /* prettier-ignore */ renderHighlightContent: (props) => <RenderHighlightContent props={props} actions={actions} values={values} />,
+    /* prettier-ignore */ renderHighlightTarget: (props) => <RenderHighlightTarget props={props} actions={actions} values={values} version={pdfValues.currentVersion!}  />,
+    /* prettier-ignore */ renderHighlightContent: (props) => <RenderHighlightContent props={props} actions={actions} values={values} version={pdfValues.currentVersion!} />,
     /* prettier-ignore */ renderHighlights: (props) =>    <RenderHighlights props={props} values={values} />,
   });
   const defaultLayoutPluginInstance = defaultLayoutPlugin({
@@ -66,55 +70,72 @@ export const EnhancedViewer = ({ fileUrl }: TEnhancedViewerProps) => {
         title: 'Notes',
       }),
     renderToolbar: (Toolbar) => (
-      <Toolbar>
-        {() => {
-          return (
-            <div
-              className={cn(
-                'grid',
-                'grid-cols-3',
-                'container max-w-none 2xl:container',
-              )}
-            >
-              <Button
-                className={cn('group p-0 md:p-0')}
-                variant="none"
-                onClick={() => togglePanel('search')}
-              >
-                <BasicIcon
-                  name="magnifyingGlass"
-                  className={cn(
-                    'h-5 w-auto transition-all duration-300 group-hover:fill-gray-500',
-                  )}
-                />
-              </Button>
-              <CustomZoom zoomPluginInstance={zoomPluginInstance} />
-              <Button
+      <div className="shadow-dark-400 flex h-full w-full py-1">
+        <Toolbar>
+          {(props) => {
+            return (
+              <div
                 className={cn(
-                  'group p-0 md:p-0',
-                  activePanels.has('highlight') && 'bg-neutral-700',
+                  'grid',
+                  'grid-cols-3',
+                  'container max-w-none 2xl:container',
                 )}
-                variant="none"
-                onClick={() => {
-                  togglePanel('highlight');
-                  highlightPluginInstance.switchTrigger(
-                    activePanels.has('highlight')
-                      ? Trigger.None
-                      : Trigger.TextSelection,
-                  );
-                }}
               >
-                <BasicIcon
-                  name="editMarker"
-                  className={cn(
-                    activePanels.has('highlight') && 'fill-off-white',
-                  )}
-                />
-              </Button>
-            </div>
-          );
-        }}
-      </Toolbar>
+                <div className="flex flex-row gap-x-2">
+                  <Button
+                    className={cn(
+                      'group rounded-xl hover:bg-neutral-700',
+                      activePanels.has('search') && 'bg-neutral-700',
+                    )}
+                    variant="none"
+                    onClick={() => togglePanel('search')}
+                  >
+                    <BasicIcon
+                      name="magnifyingGlass"
+                      className={cn(
+                        activePanels.has('search') && 'fill-sky-500',
+                        'h-5 w-auto transition-all duration-300 group-hover:fill-sky-500',
+                      )}
+                    />
+                  </Button>
+                  <Button
+                    className={cn(
+                      'group rounded-xl hover:bg-neutral-700',
+                      activePanels.has('highlight') && 'bg-neutral-700',
+                    )}
+                    variant="none"
+                    onClick={() => {
+                      togglePanel('highlight');
+                      highlightPluginInstance.switchTrigger(
+                        activePanels.has('highlight')
+                          ? Trigger.None
+                          : Trigger.TextSelection,
+                      );
+                    }}
+                  >
+                    <BasicIcon
+                      name="editMarker"
+                      className={cn(
+                        activePanels.has('highlight') && 'fill-yellow-500',
+                        'h-5 w-auto transition-all duration-300 group-hover:fill-yellow-500',
+                      )}
+                    />
+                  </Button>
+                </div>
+                <CustomZoom zoomPluginInstance={zoomPluginInstance} />
+                <div
+                  className={cn('flex h-full w-full items-center justify-end')}
+                >
+                  <Button variant="none" className="p-0 md:p-0">
+                    Commit Version
+                  </Button>
+                  <props.ShowProperties />
+                </div>
+              </div>
+            );
+          }}
+        </Toolbar>
+      </div>
     ),
   });
 
