@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import type { SearchPlugin } from '@react-pdf-viewer/search';
 
 export const usePdfSearch = (searchPluginInstance: SearchPlugin) => {
@@ -24,7 +24,7 @@ export const usePdfSearch = (searchPluginInstance: SearchPlugin) => {
         setCurrentMatch(0);
         setError('');
       }
-    } catch (err) {
+    } catch {
       setError('An error occurred while searching.');
     }
   }, [query, highlight]);

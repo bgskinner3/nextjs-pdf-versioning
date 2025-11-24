@@ -297,7 +297,7 @@ const FileUploadRoot = ({
     try {
       const newDocId = await PdfService.createDocument(file);
       actions.setDocId(newDocId);
-    } catch (error) {
+    } catch {
       actions.setError('Failed to save document. Please try again.');
       return;
     }

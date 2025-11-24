@@ -11,7 +11,6 @@ export type TToolbarStoreValues = {
   activePanels: Set<TToolbarPanel>;
 };
 
-
 export type TToolbarStoreActions = {
   setActivePanels: (panels: TToolbarPanel[]) => void;
   togglePanel: (panel: TToolbarPanel) => void;

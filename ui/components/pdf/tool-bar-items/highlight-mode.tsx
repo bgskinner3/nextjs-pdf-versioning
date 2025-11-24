@@ -8,13 +8,18 @@ import { Fragment } from 'react';
 import type { THighlighterValues, THighlighterActions } from '@/hooks';
 import { Position, Tooltip } from '@react-pdf-viewer/core';
 import { Button } from '../../button';
+import { BasicIcon } from '../../icon';
 import type { ChangeEvent } from 'react';
 import type { HighlightPlugin } from '@react-pdf-viewer/highlight';
-
+import { cn } from '@/utils';
 const RenderHighlightTarget = ({
   props,
+  values,
+  actions,
 }: {
   props: RenderHighlightTargetProps;
+  values: THighlighterValues;
+  actions: THighlighterActions;
 }) => {
   return (
     <div
@@ -31,13 +36,33 @@ const RenderHighlightTarget = ({
       <Tooltip
         position={Position.TopCenter}
         target={
-          <Button onClick={props.toggle}>
-            <MessageIcon />
-          </Button>
+          <div className="flex gap-x-2">
+            <Button onClick={props.toggle} className="group/note">
+              <MessageIcon />
+            </Button>
+            <Button
+              className="group/highlight"
+              onClick={() => {
+                actions.addNewNote({
+                  id: values.notes.length + 1,
+                  content: values.noteMessage,
+                  highlightAreas: props.highlightAreas,
+                  quote: props.selectedText,
+                  isHighlight: true,
+                });
+                props.cancel();
+              }}
+            >
+              <BasicIcon name="editMarker" />
+            </Button>
+          </div>
         }
         content={() => (
-          <div style={{ width: '100px' }} className="text-black">
-            Add a note
+          <div
+            style={{ width: '200px' }}
+            className="text-off-white text-[16px]"
+          >
+            Add a note or highlight
           </div>
         )}
         offset={{ left: 0, top: -8 }}
@@ -141,11 +166,18 @@ const RenderHighlights = ({ props, values }: TRenderHighlights) => {
 const SidebarNotes = ({
   values,
   highlightPluginInstance,
+  actions,
 }: {
   values: THighlighterValues;
   highlightPluginInstance: HighlightPlugin;
+  actions: THighlighterActions;
 }) => (
-  <>
+  <div
+    className={cn(
+      'flex w-full max-w-[500px] flex-col items-center gap-2 overflow-hidden',
+    )}
+  >
+    <h2 className="p-3 text-2xl text-gray-500 uppercase">My Notes</h2>
     {values.notes.length === 0 && <div>There is no note</div>}
     {values.notes.map((note) => {
       return (
@@ -154,13 +186,32 @@ const SidebarNotes = ({
           onClick={() =>
             highlightPluginInstance.jumpToHighlightArea(note.highlightAreas[0])
           }
+          className={cn(
+            'grid w-full grid-cols-[auto_50px]',
+            'cursor-pointer px-4 py-2 hover:bg-gray-600',
+            'transition-all duration-300',
+          )}
         >
-          <blockquote>{note.quote}</blockquote>
-          {note.content}
+          <div className="flex flex-col">
+            <span className="line-clamp-2">{note.content}</span>
+            <blockquote className="line-clamp-1 text-neutral-500">
+              {note.quote}
+            </blockquote>
+          </div>
+          <Button
+            className="group place-self-center"
+            variant="none"
+            onClick={() => actions.deleteNote(note.id)}
+          >
+            <BasicIcon
+              name="trash"
+              className="h-auto w-5 transition-all duration-500 group-hover:fill-red-300"
+            />
+          </Button>
         </div>
       );
     })}
-  </>
+  </div>
 );
 
 export {

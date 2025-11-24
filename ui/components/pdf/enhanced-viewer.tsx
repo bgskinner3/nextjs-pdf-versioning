@@ -47,7 +47,7 @@ export const EnhancedViewer = ({ fileUrl }: TEnhancedViewerProps) => {
   const selectionModePluginInstance = selectionModePlugin();
   const highlightPluginInstance = highlightPlugin({
     trigger: Trigger.None,
-    /* prettier-ignore */ renderHighlightTarget: (props) => <RenderHighlightTarget props={props} />,
+    /* prettier-ignore */ renderHighlightTarget: (props) => <RenderHighlightTarget props={props} actions={actions} values={values}  />,
     /* prettier-ignore */ renderHighlightContent: (props) => <RenderHighlightContent props={props} actions={actions} values={values} />,
     /* prettier-ignore */ renderHighlights: (props) =>    <RenderHighlights props={props} values={values} />,
   });
@@ -59,6 +59,7 @@ export const EnhancedViewer = ({ fileUrl }: TEnhancedViewerProps) => {
           <SidebarNotes
             values={values}
             highlightPluginInstance={highlightPluginInstance}
+            actions={actions}
           />
         ),
         icon: <MessageIcon />,

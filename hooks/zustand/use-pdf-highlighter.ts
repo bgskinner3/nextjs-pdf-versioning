@@ -12,11 +12,13 @@ type TNote = {
 
 export type THighlighterValues = {
   noteMessage: string;
+  type: 'note' | 'highlight' | null;
   notes: TNote[];
 };
 
 export type THighlighterActions = {
   setSingleNoteMessage: (message: string) => void;
+  setType: (type: 'note' | 'highlight' | null) => void;
   addNewNote: (note: TNote) => void;
   updateNote: (id: number, content: Partial<TNote>) => void;
   deleteNote: (id: number) => void;
@@ -31,14 +33,14 @@ const useHighlighterStore = create<THighlighterStore>()(
     (set, get) => ({
       noteMessage: '',
       notes: [],
-
+      type: null,
       actions: {
         setSingleNoteMessage: (message: string) =>
           set({ noteMessage: message }),
-
+        setType: (type: 'note' | 'highlight' | null) => set({ type: type }),
         addNewNote: (note: TNote) => {
           const state = get();
-          set({ notes: [...state.notes, note] });
+          set({ notes: [...state.notes, note], type: null });
         },
 
         updateNote: (id: number, content: Partial<TNote>) => {
@@ -67,7 +69,8 @@ const useHighlighterStore = create<THighlighterStore>()(
 export const useHighlighterValues = () => {
   const noteMessage = useHighlighterStore((state) => state.noteMessage);
   const notes = useHighlighterStore((state) => state.notes);
-  return { noteMessage, notes };
+  const type = useHighlighterStore((state) => state.type);
+  return { noteMessage, notes, type };
 };
 
 export const useHighlighterActions = () => {

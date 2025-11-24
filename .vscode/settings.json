@@ -22,10 +22,7 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true
   },
-  "cSpell.words": [
-    "Dexie",
-    "TPDF"
-  ],
+  "cSpell.words": ["Dexie", "TPDF"],
   "eslint.enable": true,
   "eslint.format.enable": true,
   "eslint.lintTask.enable": true,
