@@ -44,7 +44,9 @@ export const EnhancedViewer = ({ fileUrl }: TEnhancedViewerProps) => {
   const pdfValues = usePdfValues();
   const pdfActions = usePdfActions();
   const values = useHighlighterValues();
+
   const highlighterActions = useHighlighterActions();
+
   const { togglePanel } = useToolbarActions();
   const { activePanels } = useToolbarValues();
   const zoomPluginInstance = zoomPlugin({});
@@ -120,6 +122,17 @@ export const EnhancedViewer = ({ fileUrl }: TEnhancedViewerProps) => {
                       className={cn(
                         activePanels.has('highlight') && 'fill-yellow-500',
                         'h-5 w-auto transition-all duration-300 group-hover:fill-yellow-500',
+                      )}
+                    />
+                  </Button>
+                  <Button
+                    className={cn('group rounded-xl hover:bg-neutral-700')}
+                    variant="none"
+                  >
+                    <BasicIcon
+                      name="textBox"
+                      className={cn(
+                        'h-5 w-auto transition-all duration-300 group-hover:fill-green-500',
                       )}
                     />
                   </Button>

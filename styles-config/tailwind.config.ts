@@ -55,6 +55,25 @@ const tailwindConfig: Config = {
           from: { opacity: '1', transform: 'translateY(0)' },
           to: { opacity: '0', transform: 'translateY(-4px)' },
         },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        fadeOut: {
+          '0%': { opacity: '1' },
+          '100%': { opacity: '0' },
+        },
+        contentShow: {
+          from: {
+            opacity: '0',
+            transform: 'translate(-50%, -38%) scale(0.96)',
+          },
+          to: { opacity: '1', transform: 'translate(-50%, -50%) scale(1)' },
+        },
+        contentClose: {
+          from: { opacity: '1', transform: 'translate(-50%, -50%) scale(1)' },
+          to: { opacity: '0', transform: 'translate(-50%, -38%) scale(0.96)' },
+        },
       },
       animation: {
         shake: 'shake 0.82s cubic-bezier(.36,.07,.19,.97) both',
@@ -66,6 +85,8 @@ const tailwindConfig: Config = {
         slideUpAndFade: 'slideUpAndFade 300ms ease-in-out',
         slideRightAndFade: 'slideRightAndFade 300ms ease-in-out',
         fadeUpAndOut: 'fadeUpAndOut  400ms cubic-bezier(0.16, 1, 0.3, 1)', // TOOL TIP
+        contentShow: 'contentShow 0.2s ease-in-out', // modal & dialog entry
+        contentClose: 'contentClose 0.5s ease-in-out', // modal & dialog exit
       },
       boxShadow: {
         'dark-100': '0px 0px 1px 0px hsl(0 0% 0% / 0.90), 0px 1px 1px 0px #000',
