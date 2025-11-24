@@ -182,7 +182,7 @@ const DialogHeader = ({ className, ...props }: DialogHeaderProps) => {
       className={cn(
         'flex flex-col gap-1.5 px-4 pt-6 text-left md:px-6',
         bgcolor ? 'pb-6' : 'pb-1.5',
-        'text-black',
+        'text-white',
         className,
       )}
       {...props}

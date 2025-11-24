@@ -26,7 +26,12 @@ import {
   highlightPlugin,
   Trigger,
   MessageIcon,
+  SelectionData,
 } from '@react-pdf-viewer/highlight';
+import {
+  PluginOnTextLayerRender,
+  LayerRenderStatus,
+} from '@react-pdf-viewer/core';
 import {
   RenderHighlightContent,
   RenderHighlights,
@@ -36,9 +41,122 @@ import {
   SearchViewer,
 } from './tool-bar-items';
 import { LOCAL_STORAGE_KEYS } from '@/constants';
+import { Dialog } from '../dialog';
+import { useCallback } from 'react';
+import {
+  RenderHighlightContentProps,
+  RenderHighlightTargetProps,
+  RenderHighlightsProps,
+} from '@react-pdf-viewer/highlight';
+import { useState, useEffect } from 'react';
 type TEnhancedViewerProps = {
   fileUrl: string;
 };
+function normalizeSelectionData(selectionData: SelectionData): SelectionData {
+  if (
+    !selectionData ||
+    !selectionData.divTexts ||
+    selectionData.divTexts.length === 0
+  ) {
+    console.warn(
+      '[normalizeSelectionData] Empty selectionData, using fallback defaults',
+      selectionData,
+    );
+
+    return {
+      ...selectionData,
+      divTexts: [],
+      startDivIndex: 0,
+      endDivIndex: 0,
+      startOffset: 0,
+      endOffset: 0,
+    };
+  }
+
+  console.log(
+    '[normalizeSelectionData] Original selectionData:',
+    selectionData,
+  );
+
+  // 1️⃣ Sort divs by divIndex
+  const sortedDivs = [...selectionData.divTexts].sort(
+    (a, b) => a.divIndex - b.divIndex,
+  );
+  console.log(
+    '[normalizeSelectionData] Sorted divTexts:',
+    sortedDivs.map((d) => d.divIndex),
+  );
+
+  // 2️⃣ Remove duplicates
+  const uniqueDivs = sortedDivs.filter(
+    (div, index, arr) =>
+      index === 0 || div.divIndex !== arr[index - 1].divIndex,
+  );
+  if (uniqueDivs.length !== sortedDivs.length) {
+    console.log(
+      '[normalizeSelectionData] Removed duplicate divIndices:',
+      uniqueDivs.map((d) => d.divIndex),
+    );
+  }
+
+  // 3️⃣ Clamp indices
+  let startDivIndex = Math.min(
+    Math.max(selectionData.startDivIndex, 0),
+    uniqueDivs.length - 1,
+  );
+  let endDivIndex = Math.min(
+    Math.max(selectionData.endDivIndex, 0),
+    uniqueDivs.length - 1,
+  );
+
+  // 4️⃣ Ensure chronological order
+  if (startDivIndex > endDivIndex) {
+    console.log(
+      '[normalizeSelectionData] Swapping start/end div indices to ensure chronological order',
+    );
+    [startDivIndex, endDivIndex] = [endDivIndex, startDivIndex];
+  }
+
+  // 5️⃣ Clamp offsets to actual DOM child nodes using normalize()
+  const clampOffset = (divIndex: number, offset: number) => {
+    const div = uniqueDivs[divIndex];
+    if (!div) return 0;
+
+    // Find the div node in the DOM
+    const divNode = document.querySelector(
+      `[data-div-index="${div.divIndex}"]`,
+    ) as HTMLElement | null;
+
+    if (!divNode || divNode.childNodes.length === 0) return 0;
+
+    // Normalize the node to merge text nodes and remove empty nodes
+    divNode.normalize();
+
+    // Clamp offset to the number of child nodes
+    return Math.min(Math.max(offset, 0), divNode.childNodes.length);
+  };
+
+  const startOffset = clampOffset(startDivIndex, selectionData.startOffset);
+  const endOffset = clampOffset(endDivIndex, selectionData.endOffset);
+  console.log(
+    '[normalizeSelectionData] Clamped startOffset/endOffset:',
+    startOffset,
+    endOffset,
+  );
+
+  const normalized = {
+    ...selectionData,
+    divTexts: uniqueDivs,
+    startDivIndex,
+    endDivIndex,
+    startOffset,
+    endOffset,
+  };
+
+  console.log('[normalizeSelectionData] Normalized selectionData:', normalized);
+
+  return normalized;
+}
 
 export const EnhancedViewer = ({ fileUrl }: TEnhancedViewerProps) => {
   const pdfValues = usePdfValues();
@@ -52,13 +170,67 @@ export const EnhancedViewer = ({ fileUrl }: TEnhancedViewerProps) => {
   const zoomPluginInstance = zoomPlugin({});
   const searchPluginInstance = searchPlugin({ enableShortcuts: true });
   const selectionModePluginInstance = selectionModePlugin();
+  const renderHighlightTarget = useCallback(
+    (props: RenderHighlightTargetProps) => {
+      // const safeSelectionData = props.selectionData
+      //   ? normalizeSelectionData(props.selectionData)
+      //   : undefined;
+      const safeSelectionData = props.selectionData
+        ? normalizeSelectionData(props.selectionData)
+        : undefined;
+      // normalize the DOM nodes of the selected divs
+      safeSelectionData?.divTexts.forEach((div) => {
+        const divNode = document.querySelector(
+          `[data-div-index="${div.divIndex}"]`,
+        ) as HTMLElement | null;
+        if (divNode) divNode.normalize();
+      });
 
+      return (
+        <RenderHighlightTarget
+          props={{ ...props, selectionData: safeSelectionData }}
+          values={values}
+          actions={highlighterActions}
+          version={pdfValues.currentVersion!}
+        />
+      );
+    },
+    [values, highlighterActions, pdfValues.currentVersion],
+  );
+
+  const renderHighlightContent = useCallback(
+    (props: RenderHighlightContentProps) => {
+      const safeSelectionData = props.selectionData
+        ? normalizeSelectionData(props.selectionData)
+        : undefined;
+
+      return (
+        <RenderHighlightContent
+          props={{ ...props, selectionData: safeSelectionData }}
+          values={values}
+          actions={highlighterActions}
+          version={pdfValues.currentVersion!}
+        />
+      );
+    },
+    [values, highlighterActions, pdfValues.currentVersion],
+  );
+
+  const renderHighlights = useCallback(
+    (props: RenderHighlightsProps) => {
+      return <RenderHighlights props={props} values={values} />;
+    },
+    [values],
+  );
+
+  // Top-level plugin instance (hooks inside, called at top level)
   const highlightPluginInstance = highlightPlugin({
     trigger: Trigger.None,
-    /* prettier-ignore */ renderHighlightTarget: (props) => <RenderHighlightTarget props={props} actions={highlighterActions} values={values} version={pdfValues.currentVersion!}  />,
-    /* prettier-ignore */ renderHighlightContent: (props) => <RenderHighlightContent props={props} actions={highlighterActions} values={values} version={pdfValues.currentVersion!} />,
-    /* prettier-ignore */ renderHighlights: (props) =>    <RenderHighlights props={props} values={values} />,
+    renderHighlightTarget,
+    renderHighlightContent,
+    // renderHighlights,
   });
+
   const defaultLayoutPluginInstance = defaultLayoutPlugin({
     setInitialTab: (_doc) => Promise.resolve(0),
     sidebarTabs: (defaultTabs) =>
@@ -150,19 +322,60 @@ export const EnhancedViewer = ({ fileUrl }: TEnhancedViewerProps) => {
                   >
                     Commit
                   </Button>
-                  <Button
-                    variant="solid"
-                    className="flex max-h-[30px] w-full max-w-[120px] justify-center rounded-md border"
-                    onClick={() => {
-                      pdfActions.reset({});
-                      highlighterActions.resetNotes();
-                      ObjectUtils.keys(LOCAL_STORAGE_KEYS).forEach((value) =>
-                        localStorage.removeItem(value),
-                      );
-                    }}
+
+                  <Dialog
+                    size="small"
+                    overlayClassName=" z-[10002] bg-black/30 backdrop-blur-3xl"
+                    displayClose={false}
                   >
-                    New
-                  </Button>
+                    <Dialog.Trigger asChild>
+                      <Button
+                        variant="solid"
+                        className="flex max-h-[30px] w-full max-w-[120px] justify-center rounded-md border"
+                      >
+                        New
+                      </Button>
+                    </Dialog.Trigger>
+                    <Dialog.Content
+                      className={cn(
+                        'group/content z-10002 h-fit',
+                        'bg-cool-gray-1100',
+                      )}
+                    >
+                      <Dialog.Header>
+                        <Dialog.Title className="sr-only">
+                          Are you sure?
+                        </Dialog.Title>
+                        <Dialog.Description className="w-full text-center">
+                          Heads up! If you bail now, everything you’ve done goes
+                          *poof*. Still wanna start over?
+                        </Dialog.Description>
+                      </Dialog.Header>
+                      <Dialog.Body>
+                        <div className="flex w-full flex-row justify-evenly">
+                          <Button
+                            variant="solid"
+                            className="flex w-full max-w-[150px] justify-center border"
+                            onClick={() => {
+                              pdfActions.reset({});
+                              highlighterActions.resetNotes();
+                              ObjectUtils.keys(LOCAL_STORAGE_KEYS).forEach(
+                                (value) => localStorage.removeItem(value),
+                              );
+                            }}
+                          >
+                            Yes, im sure
+                          </Button>
+                          <Button
+                            variant="solid"
+                            className="flex w-full max-w-[150px] justify-center border"
+                          >
+                            I lied
+                          </Button>
+                        </div>
+                      </Dialog.Body>
+                    </Dialog.Content>
+                  </Dialog>
                   {/* <props.ShowProperties /> */}
                 </div>
               </div>
@@ -180,16 +393,51 @@ export const EnhancedViewer = ({ fileUrl }: TEnhancedViewerProps) => {
         <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
           <Viewer
             fileUrl={fileUrl}
-            defaultScale={SpecialZoomLevel.ActualSize}
+            // defaultScale={SpecialZoomLevel.ActualSize}
             plugins={[
               defaultLayoutPluginInstance,
               searchPluginInstance,
               zoomPluginInstance,
               selectionModePluginInstance,
+
+              {
+                onCanvasLayerRender(props) {
+                  console.log('NDJKBFASLF ', props);
+                },
+                onTextLayerRender: ({ ele, pageIndex, scale, status }) => {
+                  console.log('HEREEE');
+                  if (status === LayerRenderStatus.PreRender) {
+                    ele.normalize();
+                    Array.from(ele.childNodes).forEach((child) => {
+                      if (
+                        child.nodeType === Node.TEXT_NODE &&
+                        !child.textContent?.trim()
+                      ) {
+                        ele.removeChild(child);
+                      }
+                    });
+                  }
+                },
+                onAnnotationLayerRender({ container }) {
+                  console.log('PREEEE');
+                  // Remove any orphaned DOM nodes that may have been added by failed highlights
+                  Array.from(container.childNodes).forEach((node) => {
+                    if (node.nodeType === Node.ELEMENT_NODE) {
+                      const el = node as HTMLElement;
+                      if (
+                        el.classList.contains('rpv-highlight') &&
+                        !el.textContent?.trim()
+                      ) {
+                        container.removeChild(el);
+                      }
+                    }
+                  });
+                },
+              },
               highlightPluginInstance,
             ]}
             theme="dark"
-            enableSmoothScroll={true}
+            // enableSmoothScroll={true}
           />
         </Worker>
       </div>
