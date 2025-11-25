@@ -24,14 +24,12 @@ export function useSafeHighlightPlugin(): HighlightPlugin {
   const actions = useHighlighterActions();
   const pdfValues = usePdfValues();
 
-  // Clamp selection data before sending to plugin
-
   const renderHighlightTarget = useCallback(
     (props: RenderHighlightTargetProps) => {
       const safeSelectionData = props.selectionData
         ? normalizeSelectionData(props.selectionData)
         : undefined;
-      // normalize the DOM nodes of the selected divs
+
       safeSelectionData?.divTexts.forEach((div) => {
         const divNode: HTMLElement | null = document.querySelector(
           `[data-div-index="${div.divIndex}"]`,

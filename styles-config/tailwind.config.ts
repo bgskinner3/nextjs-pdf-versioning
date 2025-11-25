@@ -81,6 +81,14 @@ const tailwindConfig: Config = {
           '0%': { transform: 'translateX(-100%)' },
           '100%': { transform: 'translateX(200%)' },
         },
+        copyUpAndFade: {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        copyDownAndFade: {
+          '0%': { opacity: '1', transform: 'translateY(0)' },
+          '100%': { opacity: '0', transform: 'translateY(10px)' },
+        },
       },
       animation: {
         shake: 'shake 0.82s cubic-bezier(.36,.07,.19,.97) both',
@@ -94,6 +102,8 @@ const tailwindConfig: Config = {
         fadeUpAndOut: 'fadeUpAndOut  400ms cubic-bezier(0.16, 1, 0.3, 1)', // TOOL TIP
         contentShow: 'contentShow 0.2s ease-in-out', // modal & dialog entry
         contentClose: 'contentClose 0.5s ease-in-out', // modal & dialog exit
+        copyUpAndFade: 'copyUpAndFade 300ms ease-in forwards',
+        copyDownAndFade: 'copyDownAndFade 500ms ease-in forwards',
       },
       boxShadow: {
         'dark-100': '0px 0px 1px 0px hsl(0 0% 0% / 0.90), 0px 1px 1px 0px #000',

@@ -92,7 +92,7 @@ const DialogClose = DialogPrimitive.Close;
 DialogClose.displayName = DialogPrimitive.Close.displayName;
 
 const dialogContentVariants = cva(
-  'data-[state=open]:animate data-[state=close]:animate-content-close fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%] transform will-change-[transform,translate] flex flex-col overflow-hidden rounded-xl bg-white max-h-[70dvh] md:max-h-[60dvh]',
+  'data-[state=open]:animate-copy-up-and-fade  data-[state=close]:animate-copy-down-and-fade fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%] transform will-change-[transform,translate] flex flex-col overflow-hidden rounded-xl bg-white max-h-[70dvh] md:max-h-[60dvh]',
   {
     variants: {
       size: {
@@ -152,7 +152,7 @@ const DialogContent = forwardRef<
             <DialogClose
               className={cn(
                 'absolute top-5 right-5 text-black outline-none focus:outline-none print:hidden',
-                'group/accordionContainer ',
+                'group/accordionContainer',
                 closeButtonContainerClassName,
               )}
               onClick={onCloseClick}
