@@ -64,15 +64,18 @@ const tailwindConfig: Config = {
           '100%': { opacity: '0' },
         },
         contentShow: {
-          from: {
+          '0%': {
             opacity: '0',
             transform: 'translate(-50%, -38%) scale(0.96)',
           },
-          to: { opacity: '1', transform: 'translate(-50%, -50%) scale(1)' },
+          '100%': { opacity: '1', transform: 'translate(-50%, -50%) scale(1)' },
         },
         contentClose: {
-          from: { opacity: '1', transform: 'translate(-50%, -50%) scale(1)' },
-          to: { opacity: '0', transform: 'translate(-50%, -38%) scale(0.96)' },
+          '0%': { opacity: '1', transform: 'translate(-50%, -50%) scale(1)' },
+          '100%': {
+            opacity: '0',
+            transform: 'translate(-50%, -38%) scale(0.96)',
+          },
         },
         skeletonShimmer: {
           '0%': { transform: 'translateX(-100%)' },

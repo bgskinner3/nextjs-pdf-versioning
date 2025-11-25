@@ -17,6 +17,11 @@ const rootVariants = cva(
           'hover:text-yellow-500 hover:border-yellow-500  rounded-md',
           'border bg-transparent text-white disabled:bg-gray-200 rounded-xl border-white  font-bold hover:bg-gray-100/30 hover:duration-300',
         ),
+        error: cn(
+          'bg-blood-red flex w-full max-w-[150px] justify-center border-red-400 text-red-400',
+          'hover:border-blood-red hover:text-blood-red hover:bg-red-400',
+          'active:border-blood-red active:text-blood-red active:bg-red-400 rounded-xl',
+        ),
 
         none: 'p-0',
       },

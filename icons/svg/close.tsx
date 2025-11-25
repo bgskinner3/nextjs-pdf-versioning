@@ -12,6 +12,7 @@ const Close = forwardRef<SVGSVGElement, TIconProps>((props, ref) => {
       ref={ref}
       {...props}
     >
+      <title>Close</title>
       <path
         fillRule="evenodd"
         clipRule="evenodd"

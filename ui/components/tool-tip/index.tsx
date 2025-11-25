@@ -16,9 +16,10 @@ const TooltipContent = forwardRef<
     <TooltipPrimitive.Content
       ref={ref}
       sideOffset={sideOffset}
+      side={'bottom'}
       alignOffset={-20}
       className={cn(
-        'body-14 rounded-md border border-black bg-black px-4 py-1 text-center wrap-break-word text-white shadow-md will-change-[transform,opacity]',
+        'body-14 shadow-dark-300 rounded-md border border-black bg-black px-4 py-1 text-center wrap-break-word text-white',
         'data-[side=left]:animate-slide-right-and-fade',
         'data-[side=bottom]:animate-slide-up-and-fade',
         'data-[side=right]:animate-slide-left-and-fade',
@@ -47,7 +48,7 @@ export const TooltipWrapper = ({
   ...rest
 }: TActionTooltip) => {
   return (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={100}>
       <Tooltip>
         <TooltipTrigger asChild>{trigger}</TooltipTrigger>
         <TooltipContent {...rest}>{children}</TooltipContent>

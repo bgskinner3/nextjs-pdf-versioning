@@ -13,7 +13,7 @@ import {
 import { Trigger } from '@react-pdf-viewer/highlight';
 import { LOCAL_STORAGE_KEYS } from '@/constants';
 import { TooltipWrapper } from '../../tool-tip';
-
+import { useState } from 'react';
 type TToolBarRoot = {} & ComponentPropsWithoutRef<'div'>;
 
 const ToolBarControlsRoot = ({
@@ -122,6 +122,7 @@ const InteractiveActions = ({
 };
 type THomeControlActions = {} & ComponentPropsWithoutRef<'div'>;
 const HomeControlActions = ({ className, ...props }: THomeControlActions) => {
+  const [open, setOpen] = useState<boolean>(false);
   const pdfActions = usePdfActions();
   const highlighterActions = useHighlighterActions();
   return (
@@ -143,6 +144,8 @@ const HomeControlActions = ({ className, ...props }: THomeControlActions) => {
         size="small"
         overlayClassName=" z-[10002] bg-black/30 backdrop-blur-3xl"
         displayClose={false}
+        onOpenChange={(val) => setOpen(val)}
+        open={open}
       >
         <Dialog.Trigger asChild>
           <Button
@@ -165,7 +168,7 @@ const HomeControlActions = ({ className, ...props }: THomeControlActions) => {
           <Dialog.Body>
             <div className="flex w-full flex-row justify-evenly">
               <Button
-                variant="solid"
+                variant="error"
                 className="flex w-full max-w-[150px] justify-center border"
                 onClick={() => {
                   pdfActions.reset({});
@@ -180,8 +183,9 @@ const HomeControlActions = ({ className, ...props }: THomeControlActions) => {
               <Button
                 variant="solid"
                 className="flex w-full max-w-[150px] justify-center border"
+                onClick={() => setOpen(false)}
               >
-                I lied
+                Nevermind
               </Button>
             </div>
           </Dialog.Body>
