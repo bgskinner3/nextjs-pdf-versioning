@@ -6,12 +6,15 @@ import '@react-pdf-viewer/search/lib/styles/index.css';
 import '@react-pdf-viewer/selection-mode/lib/styles/index.css';
 import '@react-pdf-viewer/highlight/lib/styles/index.css';
 import '@react-pdf-viewer/properties/lib/styles/index.css';
+import '@react-pdf-viewer/thumbnail/lib/styles/index.css';
 import { Viewer, Worker, SpecialZoomLevel } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import { searchPlugin } from '@react-pdf-viewer/search';
 import { zoomPlugin } from '@react-pdf-viewer/zoom';
 import { selectionModePlugin } from '@react-pdf-viewer/selection-mode';
+import { thumbnailPlugin } from '@react-pdf-viewer/thumbnail';
 import { BasicIcon } from '../icon';
+import { Skeleton } from '../skeleton';
 import {
   ToolBarControls,
   CustomZoom,
@@ -24,7 +27,7 @@ import {
   useSafeHighlightPlugin,
   useToolbarValues,
 } from '@/hooks';
-import { ArrayUtils } from '@/utils';
+import { ArrayUtils, cn } from '@/utils';
 type TEnhancedViewerProps = {
   fileUrl: string;
 };
@@ -41,6 +44,9 @@ export const PDFViewerCore = ({ fileUrl }: TEnhancedViewerProps) => {
   const searchPluginInstance = searchPlugin({ enableShortcuts: true });
   const selectionModePluginInstance = selectionModePlugin();
   const highlightPluginInstance = useSafeHighlightPlugin();
+  const thumbnailPluginInstance = thumbnailPlugin({
+    renderSpinner: () => <Skeleton />,
+  });
   const defaultLayoutPluginInstance = defaultLayoutPlugin({
     setInitialTab: (_doc) => Promise.resolve(0),
     sidebarTabs: (defaultTabs) => {
@@ -63,11 +69,27 @@ export const PDFViewerCore = ({ fileUrl }: TEnhancedViewerProps) => {
     renderToolbar: (Toolbar) => (
       <div className="shadow-dark-300 flex h-[50px] w-full items-center bg-inherit">
         <Toolbar>
-          {(_) => (
+          {({ GoToNextPage, GoToPreviousPage, NumberOfPages }) => (
             <ToolBarControls>
-              <ToolBarControls.InteractiveActions
-                highlightPluginInstance={highlightPluginInstance}
-              />
+              <div className="flew-row flex items-center gap-x-2">
+                <ToolBarControls.InteractiveActions
+                  highlightPluginInstance={highlightPluginInstance}
+                />
+
+                <div className="flex h-full flex-row items-center justify-center py-1">
+                  <div
+                    className={cn(
+                      'flex h-full flex-row items-center justify-center gap-x-4 rounded-xl px-4',
+                      '[&_svg]:stroke-off-white! [&_svg]:stroke-2!',
+                      '[&_div]:pt-1!',
+                    )}
+                  >
+                    <GoToPreviousPage />
+                    <NumberOfPages />
+                    <GoToNextPage />
+                  </div>
+                </div>
+              </div>
               <CustomZoom zoomPluginInstance={zoomPluginInstance} />
               <ToolBarControls.HomeActions />
             </ToolBarControls>
@@ -95,6 +117,7 @@ export const PDFViewerCore = ({ fileUrl }: TEnhancedViewerProps) => {
               zoomPluginInstance,
               selectionModePluginInstance,
               highlightPluginInstance,
+              thumbnailPluginInstance,
             ]}
             theme="dark"
             enableSmoothScroll={true}

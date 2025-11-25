@@ -22,9 +22,9 @@ const ToolBarControlsRoot = ({
   return (
     <div
       className={cn(
-        'grid h-full',
+        'grid h-full w-full px-12',
         'grid-cols-3 pt-1',
-        'container max-w-none 2xl:container',
+        // 'container max-w-none 2xl:container',
         className,
       )}
       {...props}

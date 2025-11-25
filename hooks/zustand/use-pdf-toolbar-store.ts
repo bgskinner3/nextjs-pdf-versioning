@@ -27,7 +27,7 @@ type TResetOptions = {
 };
 
 const usePdfToolbarStore = create<TToolbarStore>((set, get) => ({
-  activePanels: new Set(['search']),
+  activePanels: new Set([]),
 
   actions: {
     setActivePanels: (panels) => set({ activePanels: new Set(panels) }),

@@ -74,6 +74,10 @@ const tailwindConfig: Config = {
           from: { opacity: '1', transform: 'translate(-50%, -50%) scale(1)' },
           to: { opacity: '0', transform: 'translate(-50%, -38%) scale(0.96)' },
         },
+        skeletonShimmer: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(200%)' },
+        },
       },
       animation: {
         shake: 'shake 0.82s cubic-bezier(.36,.07,.19,.97) both',

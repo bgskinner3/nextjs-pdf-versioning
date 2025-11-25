@@ -218,27 +218,32 @@ const SidebarNotes = ({
 }) => (
   <div
     className={cn(
-      'flex w-full max-w-[500px] flex-col items-center gap-2 overflow-hidden',
+      'flex h-fit w-full flex-col items-center gap-2 overflow-hidden',
+      'place-self-stretch overflow-hidden px-3',
     )}
   >
     <h2 className="p-3 text-2xl text-gray-500 uppercase">Annotations</h2>
     <div className="hidden last:flex">No Annotations currently</div>
-    {values.notes.map((note) => {
+    {values.notes.map((note, i) => {
       return (
         <div
-          key={note.id}
+          key={`${note.id}-${note.quote}-${i}`}
           onClick={() =>
             highlightPluginInstance.jumpToHighlightArea(note.highlightAreas[0])
           }
           className={cn(
-            'grid w-full grid-cols-[auto_50px]',
-            'cursor-pointer px-4 py-2 hover:bg-gray-600',
-            'transition-all duration-300',
+            'grid w-full grid-cols-[auto_20px]',
+            'cursor-pointer gap-x-3 px-4 py-2 hover:bg-gray-600',
+            'max-w-xl rounded-xl transition-all duration-300',
+            'transition-all duration-300 active:scale-[.98]',
           )}
         >
           <div className="flex flex-col">
-            <span className="line-clamp-2">{note.content}</span>
-            <blockquote className="line-clamp-1 text-neutral-500">
+            <span className="text-off-white font-bold capitalize">
+              {note.type === 'redactor' ? 'Redaction' : note.type}
+            </span>
+            <span className="line-clamp-2 empty:hidden">{note.content}</span>
+            <blockquote className="line-clamp-1 text-neutral-500 empty:hidden">
               {note.quote}
             </blockquote>
           </div>

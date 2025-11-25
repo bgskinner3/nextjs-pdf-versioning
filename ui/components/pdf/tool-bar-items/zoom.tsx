@@ -26,7 +26,7 @@ export const CustomZoom = ({
   return (
     <div
       className={cn(
-        'flex flex-row items-center justify-center gap-2 place-self-center rounded-xl px-4 py-1',
+        'col-start-2 flex flex-row items-center justify-center gap-2 place-self-center rounded-xl px-4 py-1',
         forceFit &&
           'pointer-events-none w-fit bg-gray-400 [&_span]:text-gray-500',
       )}
