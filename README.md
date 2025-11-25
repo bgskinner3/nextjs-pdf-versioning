@@ -18,6 +18,7 @@ Built with Next.js, it allows users to manage PDFs entirely in the browser, trac
    - [Editing Content & Annotations](#editing-content--annotations)
    - [Versioning & Diffing](#versioning--diffing)
    - [Exporting Annotated PDFs](#exporting-annotated-pdfs)
+   - **[Service Architecture & Future Features](#service-architecture--future-features)**
 7. [Challenges & Trade-offs](#challenges--trade-offs)
 8. [References / Libraries Used](#references--libraries-used)
 
@@ -90,7 +91,41 @@ npm run dev
 - 💾 **Commit Version:** Click "Commit Version" in the sidebar, add a descriptive message, and snapshot your changes as a new version (V2, V3…).
 - 📊 **View History & Diff:** Select two versions from the history list to view a summary of text and annotation differences.
 
-## Implementation Detail
+
+
+
+## Implementation Details
+
+### I. PDF Upload & Initialization
+ - Users can drag & drop or pick a PDF file to upload.
+ - On first upload, Version 1 (V1) is automatically created.
+ - Zustand store keeps track of:
+   - Current file
+   - Document ID
+   - Current version metadata
+   - Annotations & content operations
+
+Dexie (IndexedDB) persists the file and version metadata to allow offline usage and browser refresh without losing progress.
+
+Error handling includes file type and size validation with user-friendly messages.
+
+Key takeaway:
+
+“Zustand handles UI state, Dexie handles persistence—so the app is reactive and resilient even offline.”
+
+
+### II. Viewing & Navigation
+   - React-PDF-Viewer displays pages and provides:
+
+
+### III. Editing Content & Annotations
+   - 
+
+
+### III. Editing Content & Annotations
+   - 
+
+
 
 ---
 
@@ -112,3 +147,10 @@ npm run dev
    - [Storybook Demo](http://storybook.masterofsum.dev/)
    - Personal Storybook of reusable and tested UI components.
    - **Usage in this project:** Only a small subset of helper functions were adapted, mainly for:
+
+
+---
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
