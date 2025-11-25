@@ -1,6 +1,6 @@
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import { cn } from '@/utils';
-import type { ComponentRef, ComponentPropsWithoutRef } from 'react';
+import type { ComponentRef, ComponentPropsWithoutRef, ReactNode } from 'react';
 import { forwardRef } from 'react';
 const TooltipProvider = TooltipPrimitive.Provider;
 
@@ -24,7 +24,7 @@ const TooltipContent = forwardRef<
         'data-[side=right]:animate-slide-left-and-fade',
         'data-[side=top]:animate-slide-down-and-fade',
         'flex w-auto',
-        'data-[state=closed]:animate-fade-up-and-out data-[state=closed]:delay-300',
+        'data-[state=closed]:animate-fade-up-and-out data-[state=closed]delay-300',
         'data-[is-hidden=true]:hidden',
         'relative z-9999',
         className,
@@ -36,3 +36,22 @@ const TooltipContent = forwardRef<
 TooltipContent.displayName = TooltipPrimitive.Content.displayName;
 
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };
+
+type TActionTooltip = {
+  trigger: ReactNode;
+} & ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>;
+
+export const TooltipWrapper = ({
+  trigger,
+  children,
+  ...rest
+}: TActionTooltip) => {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>{trigger}</TooltipTrigger>
+        <TooltipContent {...rest}>{children}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};

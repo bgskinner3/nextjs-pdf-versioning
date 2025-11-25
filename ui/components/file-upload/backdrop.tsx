@@ -31,9 +31,8 @@ function BasePattern({ hasError = false }: { hasError?: boolean }) {
     <div className="relative z-10 flex shrink-0 scale-105 flex-wrap items-center justify-center gap-x-px gap-y-px bg-neutral-900">
       <div
         className={cn(
-          'absolute -z-10 h-screen w-screen origin-center scale-0 opacity-0 transition-all delay-100 duration-2000',
-          hasError &&
-            'scale-100 animate-none bg-red-500 opacity-100 brightness-50',
+          'absolute inset-0 -z-10 h-screen w-screen origin-center scale-0 opacity-0 transition-all delay-100 duration-2000',
+          hasError && 'scale-100 bg-red-500 opacity-100 brightness-50',
         )}
       />
       {cells}

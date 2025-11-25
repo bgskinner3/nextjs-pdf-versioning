@@ -83,11 +83,11 @@ const tailwindConfig: Config = {
         shake: 'shake 0.82s cubic-bezier(.36,.07,.19,.97) both',
         shine: 'shine var(--duration) linear infinite',
         slideDownAndFade:
-          'slideDownAndFade 300ms cubic-bezier(0.16, 1, 0.3, 1)',
+          'slideDownAndFade 100ms cubic-bezier(0.16, 1, 0.3, 1)',
         slideLeftAndFade:
-          'slideLeftAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)',
-        slideUpAndFade: 'slideUpAndFade 300ms ease-in-out',
-        slideRightAndFade: 'slideRightAndFade 300ms ease-in-out',
+          'slideLeftAndFade 100ms cubic-bezier(0.16, 1, 0.3, 1)',
+        slideUpAndFade: 'slideUpAndFade 100ms ease-in-out',
+        slideRightAndFade: 'slideRightAndFade 100ms ease-in-out',
         fadeUpAndOut: 'fadeUpAndOut  400ms cubic-bezier(0.16, 1, 0.3, 1)', // TOOL TIP
         contentShow: 'contentShow 0.2s ease-in-out', // modal & dialog entry
         contentClose: 'contentClose 0.5s ease-in-out', // modal & dialog exit

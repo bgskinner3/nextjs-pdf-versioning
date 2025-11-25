@@ -12,6 +12,8 @@ import {
 } from '@/hooks';
 import { Trigger } from '@react-pdf-viewer/highlight';
 import { LOCAL_STORAGE_KEYS } from '@/constants';
+import { TooltipWrapper } from '../../tool-tip';
+
 type TToolBarRoot = {} & ComponentPropsWithoutRef<'div'>;
 
 const ToolBarControlsRoot = ({
@@ -21,12 +23,7 @@ const ToolBarControlsRoot = ({
 }: TToolBarRoot) => {
   return (
     <div
-      className={cn(
-        'grid h-full w-full px-12',
-        'grid-cols-3 pt-1',
-        // 'container max-w-none 2xl:container',
-        className,
-      )}
+      className={cn('grid h-full w-full px-12', 'grid-cols-3 pt-1', className)}
       {...props}
     >
       {children}
@@ -49,56 +46,77 @@ const InteractiveActions = ({
       className={cn('flex h-full flex-row items-center gap-x-2', className)}
       {...props}
     >
-      <Button
-        className={cn(
-          'group rounded-xl hover:bg-neutral-700',
-          activePanels.has('search') && 'bg-neutral-700',
-        )}
-        variant="none"
-        onClick={() => togglePanel('search')}
+      <TooltipWrapper
+        trigger={
+          <Button
+            className={cn(
+              'group rounded-xl hover:bg-neutral-700',
+              activePanels.has('search') && 'bg-neutral-700',
+            )}
+            variant="none"
+            onClick={() => togglePanel('search')}
+          >
+            <BasicIcon
+              name="magnifyingGlass"
+              className={cn(
+                activePanels.has('search') && 'fill-sky-500',
+                'h-5 w-auto transition-all duration-300 group-hover:fill-sky-500',
+              )}
+            />
+          </Button>
+        }
       >
-        <BasicIcon
-          name="magnifyingGlass"
-          className={cn(
-            activePanels.has('search') && 'fill-sky-500',
-            'h-5 w-auto transition-all duration-300 group-hover:fill-sky-500',
-          )}
-        />
-      </Button>
-      <Button
-        className={cn(
-          'group rounded-xl hover:bg-neutral-700',
-          activePanels.has('highlight') && 'bg-neutral-700',
-        )}
-        variant="none"
-        onClick={() => {
-          togglePanel('highlight');
-          highlightPluginInstance.switchTrigger(
-            activePanels.has('highlight')
-              ? Trigger.None
-              : Trigger.TextSelection,
-          );
-        }}
+        <span className="text-off-white text-[16px]">Search</span>
+      </TooltipWrapper>
+      <TooltipWrapper
+        trigger={
+          <Button
+            className={cn(
+              'group rounded-xl hover:bg-neutral-700',
+              activePanels.has('highlight') && 'bg-neutral-700',
+            )}
+            variant="none"
+            onClick={() => {
+              togglePanel('highlight');
+              highlightPluginInstance.switchTrigger(
+                activePanels.has('highlight')
+                  ? Trigger.None
+                  : Trigger.TextSelection,
+              );
+            }}
+          >
+            <BasicIcon
+              name="editMarker"
+              className={cn(
+                activePanels.has('highlight') && 'fill-yellow-500',
+                'h-5 w-auto transition-all duration-300 group-hover:fill-yellow-500',
+              )}
+            />
+          </Button>
+        }
       >
-        <BasicIcon
-          name="editMarker"
-          className={cn(
-            activePanels.has('highlight') && 'fill-yellow-500',
-            'h-5 w-auto transition-all duration-300 group-hover:fill-yellow-500',
-          )}
-        />
-      </Button>
-      <Button
-        className={cn('group rounded-xl hover:bg-neutral-700')}
-        variant="none"
+        <span className="text-off-white text-[16px]">Annotate</span>
+      </TooltipWrapper>
+      <TooltipWrapper
+        trigger={
+          <Button
+            className={cn('group rounded-xl hover:bg-neutral-700')}
+            variant="none"
+          >
+            <BasicIcon
+              name="textBox"
+              className={cn(
+                'h-5 w-auto transition-all duration-300 group-hover:fill-green-500',
+              )}
+            />
+          </Button>
+        }
       >
-        <BasicIcon
-          name="textBox"
-          className={cn(
-            'h-5 w-auto transition-all duration-300 group-hover:fill-green-500',
-          )}
-        />
-      </Button>
+        <div className="text-off-white flex flex-col gap-2 text-[16px]">
+          <span>Free text</span>
+          <span className="text-[14px] text-gray-500">Coming Soon!</span>
+        </div>
+      </TooltipWrapper>
     </div>
   );
 };

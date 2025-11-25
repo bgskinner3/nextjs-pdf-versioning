@@ -336,7 +336,7 @@ const FileUploadRoot = ({
       {...props}
     >
       <div className="absolute inset-0 mask-[radial-gradient(ellipse_at_center,white,transparent)]">
-        <GridPattern />
+        <GridPattern hasError={!!values.errorMessage} />
       </div>
       <motion.div
         onClick={handleClick}

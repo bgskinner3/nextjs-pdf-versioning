@@ -91,19 +91,17 @@ npm run dev
 - 💾 **Commit Version:** Click "Commit Version" in the sidebar, add a descriptive message, and snapshot your changes as a new version (V2, V3…).
 - 📊 **View History & Diff:** Select two versions from the history list to view a summary of text and annotation differences.
 
-
-
-
 ## Implementation Details
 
 ### I. PDF Upload & Initialization
- - Users can drag & drop or pick a PDF file to upload.
- - On first upload, Version 1 (V1) is automatically created.
- - Zustand store keeps track of:
-   - Current file
-   - Document ID
-   - Current version metadata
-   - Annotations & content operations
+
+- Users can drag & drop or pick a PDF file to upload.
+- On first upload, Version 1 (V1) is automatically created.
+- Zustand store keeps track of:
+  - Current file
+  - Document ID
+  - Current version metadata
+  - Annotations & content operations
 
 Dexie (IndexedDB) persists the file and version metadata to allow offline usage and browser refresh without losing progress.
 
@@ -112,42 +110,44 @@ Error handling includes file type and size validation with user-friendly message
 Key takeaway:
 Zustand handles UI state, Dexie handles persistence—so the app is reactive and resilient even offline.
 
-
 ### II. Viewing & Navigation
-   - React-PDF-Viewer displays pages and provides:
-     - Thumbnail sidebar
-     - Zoom / pan functionality
-     - Page navigation
-     - Text selection & search
 
-Key take away: 
+- React-PDF-Viewer displays pages and provides:
+  - Thumbnail sidebar
+  - Zoom / pan functionality
+  - Page navigation
+  - Text selection & search
+
+Key take away:
 Viewing is fully interactive and non-destructive, allowing safe annotation and edits before committing.”
 
-
 ### III. Editing Content & Annotations
-   - Users can add:
-    - Highlights
-    - Sticky notes
-    - Free text boxes
-    - Rectangle redactions (mask layer)
-  - All edits tracked as content operations in Zustand.
-  - HighlighterStore persists annotations to localStorage to survive browser refresh.
+
+- Users can add:
+- Highlights
+- Sticky notes
+- Free text boxes
+- Rectangle redactions (mask layer)
+- All edits tracked as content operations in Zustand.
+- HighlighterStore persists annotations to localStorage to survive browser refresh.
 - Editing text itself is non-destructive at this stage; PdfLibService would apply these edits when committing a version.
 
 Key takeaway
-  Phase 3 is all about non-destructive edits—this prevents accidental changes while letting users interact freely with the document.
+Phase 3 is all about non-destructive edits—this prevents accidental changes while letting users interact freely with the document.
 
 ### IV. Versioning & Diffing
-   - Users can commit a new version with a message (e.g., “Updated figure caption on page 3”).
-   - Version metadata, content operations, and annotations are persisted in Dexie.
-   - Planned diffing would use:
-     - Text extraction + diff-match-patch for inline changes
-     - Annotation comparison to highlight added/removed/modified annotations
+
+- Users can commit a new version with a message (e.g., “Updated figure caption on page 3”).
+- Version metadata, content operations, and annotations are persisted in Dexie.
+- Planned diffing would use:
+  - Text extraction + diff-match-patch for inline changes
+  - Annotation comparison to highlight added/removed/modified annotations
 
 Key takeaway:
 Even if diffing isn’t fully implemented, the data structures support it and the commit workflow ensures every version is reproducible
 
 ### Exporting Annotated PDFs
+
 - PdfLibService is designed to:
   - Load the original PDF
   - Apply content operations + annotations
@@ -162,24 +162,18 @@ Even if diffing isn’t fully implemented, the data structures support it and th
 Key takeaway:
 PdfLibService bridges non-destructive edits to permanent committed PDFs
 
-
-
-
 ## References / Libraries Used
 
-1. **ts-kit**
-   - [GitHub Repository](https://github.com/bgskinner3/ts-kit)
-   - Personal TypeScript utility library (in-progress).
-   - **Usage in this project:** Only a small subset of helper functions were adapted, mainly for:
-     - PDF text extraction and manipulation
-     - State management helpers for version tracking
-   - All other project logic, PDF rendering, and UI were implemented independently.
+1.  **ts-kit**
+    - [GitHub Repository](https://github.com/bgskinner3/ts-kit)
+    - A personal TypeScript utility library used for foundational helper functions such as state management abstractions and initial PDF text coordinate extraction logic. All core project logic and UI implementations were developed independently within this repository.
 
-2. **UI Implementations**
-   - [Storybook Demo](http://storybook.masterofsum.dev/)
-   - Personal Storybook of reusable and tested UI components.
-   - **Usage in this project:** Only a small subset of helper functions were adapted, mainly for:
+2.  **UI Implementations**
+    - [Storybook Demo](http://storybook.masterofsum.dev/)
+    - A repository of reusable, tested UI components used to speed up development of common elements like buttons, modals, and input fields.
 
+3.  **PDF Manipulation Library Setup**
+    - This project leverages the open-source library [pdf-lib](pdf-lib.js.org) for programmatic PDF modification and generation. No commercial SDK trial is required for this functionality.
 
 ---
 
