@@ -24,26 +24,26 @@ Built with Next.js, it allows users to manage PDFs entirely in the browser, trac
 ## Project Overview
 
 This project is a frontend PDF management tool built with Next.js. It allows users to upload PDFs, view pages with thumbnails, add annotations like highlights or sticky notes, and track version history. Users can commit new versions with messages and compare changes between versions.
-
-The app is fully browser-based, storing files and metadata in IndexedDB, and uses `@react-pdf-viewer` and `pdf-lib` for PDF rendering and editing. Future plans include advanced text editing, full version diffs, and generating annotated PDFs with a comprehensive change log.
+The app is fully browser-based, storing files and metadata in IndexedDB, and uses @react-pdf-viewer and pdf-lib for PDF rendering and manipulation.
 
 ## Features
 
 - ✅ **Upload & Initialize PDFs**
-  - ✅ Drag & drop or select a PDF file to upload.
-  - ✅ Automatic creation of Version 1 (V1) with file validation and friendly error states.
+  - Drag & drop or select a PDF file to upload.
+  - Automatic creation of Version 1 (V1) with file validation and friendly error states.
+  - Persists file and V1 metadata in IndexedDB via Dexie.js.
 
 - ✅ **View & Navigate PDFs**
-  - ✅ Page thumbnails, zoom, pan, and jump-to-page functionality.
-  - ✅ Text selection and search within the document.
+  - Page thumbnails, zoom, pan, and jump-to-page functionality.
+  - Text selection and search within the document.
 
 - ✅ **Edit Content & Add Annotations**
-  - ✅ Highlights, sticky notes, free text boxes, and rectangle redactions.
-  - ✅ Edits are tracked as content operations; annotations remain non-destructive until committed.
+  - Highlights, sticky notes, free text boxes, and rectangle redactions.
+  - Edits are tracked as content operations; annotations remain non-destructive until committed.
 
 - ✅ **Versioning & History**
-  - ✅ Commit new versions (V2, V3…) with version messages.
-  - ✅ Track changes and view version history.
+  - Commit new versions (V2, V3…) with version messages.
+  - Track changes and view version history.
 
 ### Future Implementations / Stretch Goals
 
@@ -57,16 +57,15 @@ The app is fully browser-based, storing files and metadata in IndexedDB, and use
 
 ## Tech Stack
 
-- **Framework:** ✅ Next.js 16
-- **Rendering & PDF Handling:**
-  - ✅ [`@react-pdf-viewer`](https://react-pdf-viewer.dev/) (Core + Plugins: default-layout, highlight, search, selection-mode, thumbnail, toolbar, zoom, properties)
-  - ✅ [`pdf-lib`](https://pdf-lib.js.org/) (for editing PDFs and creating annotated/exported versions)
-  - ✅ `pdfjs-dist` (underlying PDF parsing engine)
-- **State Management:** ✅ `zustand`
-- **Client-Side Storage:** ✅ `dexie` (IndexedDB wrapper)
-- **Styling:** ✅ TailwindCSS + `clsx` + `tailwind-merge`
-- **Utilities:** ✅ `uuid` for IDs, `canvas` for rendering
-- **Diffing:** ❌ `diff-match-patch` (for text diffs)
+| Category            | Technology           | Purpose                                                                      |
+| ------------------- | -------------------- | ---------------------------------------------------------------------------- |
+| Framework           | ✅ Next.js 14+       | Core application framework.                                                  |
+| PDF Handling        | ✅ @react-pdf-viewer | PDF rendering and UI/UX (viewer, toolbar, thumbnails).                       |
+| PDF Manipulation    | ✅ pdf-lib           | Generating, modifying, and exporting PDFs programmatically.                  |
+| State Management    | ✅ zustand           | Managing global application state and version history.                       |
+| Client-Side Storage | ✅ dexie             | A wrapper for IndexedDB to persist large PDF files and metadata efficiently. |
+| Styling             | ✅ TailwindCSS       | Rapid UI development and styling.                                            |
+| Diffing             | ❌ diff-match-patch  | (Planned for text diff calculation).                                         |
 
 ## Setup & Installation
 
@@ -85,7 +84,11 @@ npm run dev
 
 ## How to Use
 
----
+- 📤 **Upload:** Drag and drop a PDF file onto the designated area or use the file picker button. Version 1 (V1) is created automatically upon upload.
+- 📖 **Navigate:** Use the thumbnail sidebar or toolbar buttons to move between pages, zoom in/out, and jump to specific pages.
+- ✏️ **Annotate:** Select annotation tools (highlight, sticky note, free text, redaction) from the toolbar and interact with the main document viewer.
+- 💾 **Commit Version:** Click "Commit Version" in the sidebar, add a descriptive message, and snapshot your changes as a new version (V2, V3…).
+- 📊 **View History & Diff:** Select two versions from the history list to view a summary of text and annotation differences.
 
 ## Implementation Detail
 

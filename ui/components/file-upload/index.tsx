@@ -175,6 +175,7 @@ const FileUploaderStates = ({
             'group-data-[has-error=true]/fileBase:group-hover/file:bg-neutral-900',
             'transition-colors duration-500',
             'group-data-[has-files=true]/fileBase:pointer-events-none',
+            'shadow-dark-600',
           )}
         >
           <motion.p
