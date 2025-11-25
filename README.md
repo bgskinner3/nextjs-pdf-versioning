@@ -110,28 +110,60 @@ Dexie (IndexedDB) persists the file and version metadata to allow offline usage 
 Error handling includes file type and size validation with user-friendly messages.
 
 Key takeaway:
-
-“Zustand handles UI state, Dexie handles persistence—so the app is reactive and resilient even offline.”
+Zustand handles UI state, Dexie handles persistence—so the app is reactive and resilient even offline.
 
 
 ### II. Viewing & Navigation
    - React-PDF-Viewer displays pages and provides:
+     - Thumbnail sidebar
+     - Zoom / pan functionality
+     - Page navigation
+     - Text selection & search
+
+Key take away: 
+Viewing is fully interactive and non-destructive, allowing safe annotation and edits before committing.”
 
 
 ### III. Editing Content & Annotations
-   - 
+   - Users can add:
+    - Highlights
+    - Sticky notes
+    - Free text boxes
+    - Rectangle redactions (mask layer)
+  - All edits tracked as content operations in Zustand.
+  - HighlighterStore persists annotations to localStorage to survive browser refresh.
+- Editing text itself is non-destructive at this stage; PdfLibService would apply these edits when committing a version.
+
+Key takeaway
+  Phase 3 is all about non-destructive edits—this prevents accidental changes while letting users interact freely with the document.
+
+### IV. Versioning & Diffing
+   - Users can commit a new version with a message (e.g., “Updated figure caption on page 3”).
+   - Version metadata, content operations, and annotations are persisted in Dexie.
+   - Planned diffing would use:
+     - Text extraction + diff-match-patch for inline changes
+     - Annotation comparison to highlight added/removed/modified annotations
+
+Key takeaway:
+Even if diffing isn’t fully implemented, the data structures support it and the commit workflow ensures every version is reproducible
+
+### Exporting Annotated PDFs
+- PdfLibService is designed to:
+  - Load the original PDF
+  - Apply content operations + annotations
+  - Generate a new PDF blob for download
+
+- Exported PDFs can include:
+  - Change log page
+  - Inline callouts referencing version history
+
+- Implementation planned; service structure fully supports it.
+
+Key takeaway:
+PdfLibService bridges non-destructive edits to permanent committed PDFs
 
 
-### III. Editing Content & Annotations
-   - 
 
-
-
----
-
-## Challenges & Trade-offs
-
----
 
 ## References / Libraries Used
 
